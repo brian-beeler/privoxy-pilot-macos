@@ -3,7 +3,7 @@
 # use this file to add sites to be blocked 24/7
 #
 3 This sets what Privoxy shows as the reason for a site to be blocked
-{ +block{site found on /usr/local/etc/privoxy/configs-filters/filters.mylist.} }
+{ +block{site found in /usr/local/etc/privoxy/configs-filters/filters.mylist.} }
 #
 # .example.com will block all sites ending in that domain
 # www.example.com will block that site
