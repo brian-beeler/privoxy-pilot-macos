@@ -257,9 +257,9 @@ function lr() {
     if [[ $1 == 0 ]]; then
       sl="$sl_date privoxy $sl_reason"
     elif [[ $i -eq 1 && $1 == 1 ]]; then
-      sl="    log: $sl_date privoxy $sl_reason"
+      sl="       log: $sl_date privoxy $sl_reason"
     elif [[ $i -gt 1 && $1 == 1 ]]; then
-      sl="         $sl_date privoxy $sl_reason"
+      sl="            $sl_date privoxy $sl_reason"
     fi
 
     echo -e "$sl"
@@ -299,7 +299,7 @@ if [[ $output == *"started"* ]]; then
   echo -e "    config: $(ct "$config_date" "y") ($(ct "$(dd "/usr/local/etc/privoxy/config")" "y"))"
   echo -e "filter set: $(ct "$filter_set" "b")"
   echo -e "   filters: $(ct "$filter_list" "b")"  
-  echo "         -------------------"
+  echo "            -------------------"
   lr 1
 elif [[ $output == *"none"* ]]; then
   #echo -e "OUTPUT: $output"
