@@ -16,6 +16,6 @@
 # do not edit any files in /usr/local/etc/privoxy/filters/blp/
 # add custom lists to /usr/local/etc/privoxy/filters/
 # 
-default=ads,tracking,fraud,mylist,blah
+default=ads,tracking,fraud,mylist
 distractions=ads,tracking,fraud,mylist,distractions
 uber=ads,tracking,fraud,mylist,distractions,crypto,gambling
