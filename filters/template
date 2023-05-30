@@ -1,0 +1,11 @@
+# /usr/local/etc/privoxy/filters/$1
+# 
+# this file contains a group of user selected sites to block
+#
+# details for the privoxy "blocked" page to display on why a site was blocked:
+{ +block{site found on /usr/local/etc/privoxy/filters/$1.} }
+#
+# .example.com will block all sites ending in that domain
+# www.example.com will block just that site and not others in that domain
+#
+.example.com
