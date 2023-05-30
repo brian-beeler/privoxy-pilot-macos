@@ -385,7 +385,7 @@ elif [[ $1 == "filter" ]]; then
 
 # 
 else
-  echo "usage: ./privoxy.sh [start|stop|restart|config|log|status]"
+    echo "usage: ./privoxy.sh [start|stop|restart|status|config|filter|log]"
   echo "  start                   start server"
   echo "  stop                    stop server"
   echo "  restart                 restart"
