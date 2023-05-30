@@ -63,6 +63,8 @@ function blpfl() {
 # end blpfl()
 
 # config
+# TODO: error checking on privoxy.sh config set filter_group_no_exist
+#       right now on error no block lists are added
 function config() {
 # checks for config.bak     and creates one if not found
 # options -c restore        restore config from config.bak. retores config to a vanilla state
@@ -84,17 +86,17 @@ fi
 # checks for config.mod and creates if not found
 if [ ! -f "/usr/local/etc/privoxy/config.mod" ]; then
   echo -e "$(ct "getting" "g") $(ct "config.mod" "b")"
-  curl --no-progress-meter -o "/usr/local/etc/privoxy/config.mod" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/5dbb5a286cd557e6a2e28e291e4189cd62fa277b/config.mod"
+  curl --no-progress-meter -o "/usr/local/etc/privoxy/config.mod" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config.mod"
 fi
 # checks for mylist filter list and creates if not found
 if [ ! -f "/usr/local/etc/privoxy/filters/mylist" ]; then
   echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
-  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/5dbb5a286cd557e6a2e28e291e4189cd62fa277b/filters/mylist"
+  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
 fi
 # checks for distractions filter list and creates if not found
 if [ ! -f "/usr/local/etc/privoxy/filters/distractions" ]; then
   echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
-  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/5dbb5a286cd557e6a2e28e291e4189cd62fa277b/filters/distractions"
+  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
 fi
 
 # if ./privoxy.sh config list is called
