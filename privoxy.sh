@@ -97,11 +97,30 @@ if [ ! -f "/usr/local/etc/privoxy/filters/distractions" ]; then
   curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/5dbb5a286cd557e6a2e28e291e4189cd62fa277b/filters/distractions"
 fi
 
+# if ./privoxy.sh config list is called
+if [[ "$2" = "list" ]]; then
+  #TODO: everything 
+
+  #read config.mod for groups
+  #display as: group: filter, filter, filter, filter
+
+  # reads config.mod and saves filters to $filter_list
+  while IFS= read -r line; do
+    if [[ $line =~ ^[a-zA-Z0-9] ]]; then
+      line_tag=$(echo "$line" | awk -F= '{print $1}')
+      IFS=',' read -ra array <<< "$(echo "$line" | awk -F= '{print $2}')"
+      joined_elements=$(IFS=,; echo "${array[*]}")
+      echo "$(ct "$line_tag" "b"): $(ct "$joined_elements" "g")"
+    fi
+  done < "/usr/local/etc/privoxy/config.mod"
+
+fi
+
 # if ./privoxy.sh config set <filter group> is called
 if [ "$2" = "set" ] && [ -n "$3" ]; then
   local filter_list=()
 
-   # copies listing of file names in /usr/local/etc/privoxy/filters/ to filters_dir_files
+  # copies listing of file names in /usr/local/etc/privoxy/filters/ to filters_dir_files
   local declare filters_dir_files
   dir_list=$(ls -p /usr/local/etc/privoxy/filters/ | grep -v /)  
   for item in $dir_list; do
@@ -199,21 +218,40 @@ function dd() {
 # 
 function ft() {
   # $1 is filter/file name
-  # TODO: everything
-  # TODO: check for name conflicts
-
-  echo "# /usr/local/etc/privoxy/filters/$1"
-  echo "# "
-  echo "# this file contains a group of user selected sites to block"
-  echo "# "
-  echo "# details for the privoxy "blocked" page to display on why a site was blocked:"
-  echo "{ +block{site found on /usr/local/etc/privoxy/filters/$1.} }"
-  echo "# "
-  echo "# .example.com will block all sites ending in that domain"
-  echo "# www.example.com will block just that site and not others in that domain"
-  echo "# "
-  echo ".example.com"
-
+  # copies listing of file names in /usr/local/etc/privoxy/filters/ to filters_dir_files
+  local declare filters_dir_files
+  dir_list=$(ls -p /usr/local/etc/privoxy/filters/ | grep -v /)  
+  for item in $dir_list; do
+    filters_dir_files+=("$item")
+  done
+  filters_dir_files+=("blp")
+  match_found=false
+  if [ -n "$1" ]; then
+    for item in "${filters_dir_files[@]}"; do
+    if [[ "$item" == "$1" ]]; then
+      match_found=true
+      break
+    fi
+    done
+    if $match_found; then
+      echo $(ct "There is already a filter list or folder named $1." "y")
+    else
+      echo "# /usr/local/etc/privoxy/filters/$1"  >> /usr/local/etc/privoxy/filters/$1
+      echo "# "  >> /usr/local/etc/privoxy/filters/$1
+      echo "# this file contains a group of user selected sites to block"  >> /usr/local/etc/privoxy/filters/$1
+      echo "# "  >> /usr/local/etc/privoxy/filters/$1
+      echo "# details for the privoxy "blocked" page to display on why a site was blocked:"  >> /usr/local/etc/privoxy/filters/$1
+      echo "{ +block{site found in /usr/local/etc/privoxy/filters/$1.} }"  >> /usr/local/etc/privoxy/filters/$1
+      echo "# "  >> /usr/local/etc/privoxy/filters/$1
+      echo "# .example.com will block all sites ending in that domain"  >> /usr/local/etc/privoxy/filters/$1
+      echo "# www.example.com will block just that site and not others in that domain"  >> /usr/local/etc/privoxy/filters/$1
+      echo "# "  >> /usr/local/etc/privoxy/filters/$1
+      echo ".example.com"  >> /usr/local/etc/privoxy/filters/$1
+      echo $(ct "/usr/local/etc/privoxy/filters/$1 created" "g")
+    fi
+    else
+      echo $(ct "Please supply a filter list name" "y")
+  fi
 }
 # end ft()
 
@@ -257,9 +295,9 @@ function lr() {
     if [[ $1 == 0 ]]; then
       sl="$sl_date privoxy $sl_reason"
     elif [[ $i -eq 1 && $1 == 1 ]]; then
-      sl="       log: $sl_date privoxy $sl_reason"
+      sl="         log: $sl_date privoxy $sl_reason"
     elif [[ $i -gt 1 && $1 == 1 ]]; then
-      sl="            $sl_date privoxy $sl_reason"
+      sl="              $sl_date privoxy $sl_reason"
     fi
 
     echo -e "$sl"
@@ -277,14 +315,13 @@ function lw() {
 # display status
 function status() {
   local config_head=$(head -n 1 "/usr/local/etc/privoxy/config")
-  local filter_set="${config_head:35:$((${#config_head} - 6 - 36))}"
+  local filter_group="${config_head:35:$((${#config_head} - 6 - 36))}"
 # Read the file line by line
 while IFS= read -r line
 do
   # Check if the line starts with the filter set
-  if [[ "$line" == "$filter_set"* ]]
-  then
-    local filter_list="${line#"$filter_set="}"
+  if [[ "$line" == "$filter_group"* ]]; then
+    local filter_list="${line#"$filter_group="}"
     break
   fi
 done < "/usr/local/etc/privoxy/config.mod"
@@ -294,12 +331,12 @@ if [[ $output == *"started"* ]]; then
   up_since=$(ps -p $pid -o lstart= | awk '{print $1,$2,$3,$4}')
   up_time=$(ps -p $pid -o etime= )
   config_date=$(ls -lD "%a %b %d %H:%M:%S" /usr/local/etc/privoxy/config | awk '{print $6,$7,$8,$9}')
-  echo -e "       pid: $(ct "$pid" "y")"
-  echo -e "        up: $(ct "$up_since" "y") ($(ct "$up_time" "y"))"
-  echo -e "    config: $(ct "$config_date" "y") ($(ct "$(dd "/usr/local/etc/privoxy/config")" "y"))"
-  echo -e "filter set: $(ct "$filter_set" "b")"
-  echo -e "   filters: $(ct "$filter_list" "b")"  
-  echo "            -------------------"
+  echo -e "         pid: $(ct "$pid" "y")"
+  echo -e "          up: $(ct "$up_since" "y") ($(ct "$up_time" "y"))"
+  echo -e "      config: $(ct "$config_date" "y") ($(ct "$(dd "/usr/local/etc/privoxy/config")" "y"))"
+  echo -e "filter group: $(ct "$filter_group" "b")"
+  echo -e "     filters: $(ct "$filter_list" "b")"  
+  echo "              -------------------"
   lr 1
 elif [[ $output == *"none"* ]]; then
   #echo -e "OUTPUT: $output"
@@ -334,52 +371,27 @@ elif [[ $1 == "restart" ]]; then
 elif [[ $1 == "-s" ]] || [[ $1 == "status" ]]; then
   status
 
-# config beta
+# config
 elif [ "$1" = "config" ]; then
   config $1 $2 $3
 
-# config list
-elif [[ $1 == "-c" && -z $2 ]]; then
-  echo "Configuartion files available:"
-  output=$(ls /usr/local/etc/privoxy/*.config | awk -F/ '{print $NF}' | awk -F. '{print $1}')
-  echo "$(ct "$output" "g")"
-
-# config set
-elif [[ $1 == "-c" && -n $2 ]]; then
-  if [[ -f "/usr/local/etc/privoxy/$2.config" ]]; then
-    cp "/usr/local/etc/privoxy/$2.config" /usr/local/etc/privoxy/config
-    brew services restart privoxy
-    #echo -e "$date_stamp      $2.config (ct "active" "g")" >> /var/log/privoxy.log
-    lw "$2.config active"
-    #echo -e "$date_stamp     privoxy (ct "restart" "g")" >> /var/log/privoxy.log
-    lw "restart"
-    
-  else
-    echo "$(ct "No such configuration file." "r") Configuartion files available:"
-    #output=$(ls /usr/local/etc/privoxy/*.config | awk -F/ '{print $NF}' | awk -F. '{print $1}') && echo "$output"
-    output=$(ls /usr/local/etc/privoxy/*.config | awk -F/ '{print $NF}' | awk -F. '{print $1}')
-    echo "$(ct "$output" "g")"
-  fi
-
-# filter list
-elif [[ $1 == "-f" ]]; then
-  blpfl
-
 # display log file
-elif [[ $1 == "-l" ]]; then
+elif [[ $1 == "log" ]]; then
   lr 0
+
+# filter template
+elif [[ $1 == "filter" ]]; then
+  ft $2
 
 # 
 else
-  echo "usage: ./privoxy.sh [start|stop] [-cfls] [-c configuration file]"
+  echo "usage: ./privoxy.sh [start|stop|restart|config|log|status]"
   echo "  start                   start server"
   echo "  stop                    stop server"
   echo "  restart                 restart"
-  echo "  config                  "
-  echo "  config set <config>     "
-  echo "  -c                      list configuration files"
-  echo "  -c [file]               load configuration file"
-  echo "  -f                      updates filter lists from https://blocklistproject.github.io/Lists/"
-  echo "  -l or log               display log file"
-  echo "  -s or status            display privoxy status"
+  echo "  status                  display privoxy status"
+  echo "  config list             list filter groups"
+  echo "  config set <group>      set filter group"
+  echo "  filter <name>           create new filter list"
+  echo "  log                     display log file"
 fi
