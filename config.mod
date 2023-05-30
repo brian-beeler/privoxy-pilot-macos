@@ -1,19 +1,22 @@
-# 
-# this file contains details on modifying children of config
-# https://blocklistproject.github.io/Lists/ for descriptions of various filters
-# 
-# to create a child config file named "default" that blocks ads,tracking,fraud,mylist: default=ads,tracking,fraud,mylist
-# the new config file name will be configuration.name ie: /usr/local/etc/privoxy/configs-filters/configuration.default
-# the new filter file name will be filter.name ie: /usr/local/etc/privoxy/configs-filters/filter.ads-nl
+# /usr/local/etc/privoxy/config.mod
+# this file contains user instrustion on modifying /usr/local/etc/privoxy/config
 #
-# reserved names: abuse, ads, crypto, drugs, everything, facebook, fraud, gambling, malware
-#                 phishing, piracy, porn, ransomware, redirect, scam, tiktok, torrent, tracking
-#                 mylist, distractions
+# to create a filter configuration group named "default" that blocks sites found in:
+#   ads, tracking, fraud from the block list project
+#   "mylist" in /usr/local/etc/privoxy/filters
+#   add the following line:
+#     default=ads,tracking,fraud,mylist,blah
+#
+# reserved names for blp filters: 
+#   abuse, ads, crypto, drugs, everything, facebook, fraud, gambling, malware, phishing
+#   piracy, porn, ransomware, redirect, scam, tiktok, torrent, tracking
+# see https://blocklistproject.github.io/Lists/ for descriptions of their various filters
 # 
-default=ads,tracking,fraud,mylist
+# do not edit any files in /usr/local/etc/privoxy/filters/blp/
+# add custom lists to /usr/local/etc/privoxy/filters/
+# 
+default=ads,tracking,fraud,mylist,blah
 distractions=ads,tracking,fraud,mylist,distractions
 uber=ads,tracking,fraud,mylist,distractions,crypto,gambling
-
-
 
 
