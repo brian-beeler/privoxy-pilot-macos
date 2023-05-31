@@ -7,7 +7,7 @@ A bash script and set of templates to better manage Privoxy on macOS.
 
 **Do not use anything from this project until this notice is removed!**
 
-**This project is still in active development and is not ready for public use in any way, shape or form. It is made public for very limited testing only. If you do use it in its current state it will break things. When things break you are on your own. Some of the options listed are not currently functioning.**
+**This project is still in active development and is not ready for public use in any way, shape or form. It is made public for very limited testing only. If you do use it in its current state it will break things and when that happens you are on your own. Some of the options listed are not currently functioning.**
 
 ---
 <BR>
@@ -32,7 +32,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
     `brew install privoxy`
 
-2. After instalation start privoxy via brew:
+2. After installation start privoxy via brew:
 
     `brew start privoxy`
 
@@ -56,19 +56,17 @@ When stable I plan on using what has been done here and building the privoxy-pil
    
    `chmod uog+x /usr/local/etc/privoxy/privoxy.sh`
 
-3. To allow Privoxy to accept connections with clients on your local network (recommended):
+3. To allow Privoxy to accept connections with clients on your local network (recommended but only if you have a static IP address):
 
     `mv /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.original`
 
-    `echo -e "\r\n\r\n# \r\n# \r\n# \r\n# " >> /usr/local/etc/privoxy/config`
+    `echo -e "\r\n\r\n# \r\n# \r\n# \r\n# # allow privoxy to make connections with the local network" >> /usr/local/etc/privoxy/config`
 
-    `echo -e "# allow privoxy to make connections with the local network"  >> /usr/local/etc/privoxy/config`
-
-    `echo "listen-address $(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')":8118 >> /usr/local/etc/privoxy/config`
+    `echo -e "listen-address $(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')":8118 >> /usr/local/etc/privoxy/config`
 
     `echo -e "# \r\n# \r\n# \r\n# \r\n" >> /usr/local/etc/privoxy/config`
 
-    `echo -e /usr/local/etc/privoxy/config.orginal >> /usr/local/etc/privoxy/config`
+    `echo -e /usr/local/etc/privoxy/config.original >> /usr/local/etc/privoxy/config`
 
     `cp /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.bak`
 
@@ -102,7 +100,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
   
   1. Run Privoxy Pilot to perform its initial setup and see a list of command line options: 
    
-        `/usr/local/etc/privoxy/privoxy.sh config && /usr/local/etc/privoxy/privoxy.sh`
+        `/usr/local/etc/privoxy/privoxy.sh config setup && /usr/local/etc/privoxy/privoxy.sh`
 
         This will perform a check for configuration files required to run then return a list of options
 
@@ -114,7 +112,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 ## **Creating a new filter list**
 
-1. View a list of existing local filter lists: 
+1. View a list of existing local filter groups and lists: 
    
    `/usr/local/etc/privoxy/privoxy.sh config list` 
  
@@ -126,7 +124,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 <BR>
 
-## **Creating a new filter group**
+## **Create a new or edit an existing filter group**
 
    1. Edit the config.mod file and follow the instructions in the comments: 
     
