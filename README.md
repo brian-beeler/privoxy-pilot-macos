@@ -116,7 +116,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 1. View a list of existing local filter lists: 
    
-   `/usr/local/etc/privoxy/privoxy.sh filter list` 
+   `/usr/local/etc/privoxy/privoxy.sh config list` 
  
 2. Create a new filter list named "work" [or whatever you want to name it]:
 
