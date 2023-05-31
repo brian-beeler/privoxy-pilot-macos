@@ -116,11 +116,11 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 1. View a list of existing local filter lists: 
    
-   `/usr/local/etc/privoxy/privoxy.sh filter list"` 
+   `/usr/local/etc/privoxy/privoxy.sh filter list` 
  
 2. Create a new filter list named "work" [or whatever you want to name it]:
 
-    `/usr/local/etc/privoxy/privoxy.sh filter work"` 
+    `/usr/local/etc/privoxy/privoxy.sh filter work` 
 
 3. Open your new list and follow the instructions in the comments of the file you just created on how to add the websites you wish to block.
 
