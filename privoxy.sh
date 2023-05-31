@@ -163,7 +163,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   echo " " >> "/usr/local/etc/privoxy/config.tmp"
   cat "/usr/local/etc/privoxy/config.bak" >> "/usr/local/etc/privoxy/config.tmp"
   mv /usr/local/etc/privoxy/config.tmp /usr/local/etc/privoxy/config
-  lw "set configuration $3 active"
+  lw "config $3 active"
   brew services restart privoxy
   lw "restart"
 fi 
@@ -260,6 +260,8 @@ function ft() {
 # log read. displays log files in ANSI colors
 function lr() {
   # $1: "0" = no header, "1" = header
+  # 
+  # 
   local log_file="/var/log/privoxy.log"
   log_line_count=$(wc -l < "$log_file")
   if (( log_line_count > 10 )); then
@@ -273,33 +275,41 @@ function lr() {
     local sl="$line"
     local sl_date=$(ct "${sl:0:10} ${sl:16:8}" "y")
 
-    if [[ $sl == *"start" ]]; then
+# ✓ Thu Jan 01 1970 00:00:00 GMT     restart
+# ✓ Thu Jan 01 1970 00:00:00 GMT     start
+# ✓ Thu Jan 01 1970 00:00:00 GMT     stop
+# ✓ Thu Jan 01 1970 00:00:00 GMT     status error
+# ✓ # Thu Jan 01 1970 00:00:00 GMT     config default active
+# Thu Jan 01 1970 00:00:00 GMT     filter blp/facebook created
+# Thu Jan 01 1970 00:00:00 GMT     filter blah created
+# Thu Jan 01 1970 00:00:00 GMT     config.bak created
+
+    if [[ $sl == *"restart" ]]; then
+      local sl_reason=$(ct "restart" "g")
+    elif [[ $sl == *"start" ]]; then
       local sl_reason=$(ct "start" "g")
-    elif [[ $sl == *"restarted" ]]; then
-      local sl_reason=$(ct "restarted" "g")
     elif [[ $sl == *"stop" ]]; then
       local sl_reason=$(ct "stop" "rb")
     elif [[ $sl == *"status error" ]]; then
       local sl_reason="status $(ct "error" "rb")"
-    elif [[ $sl == *"status started" ]]; then
-      local sl_reason="status $(ct "started" "g")"
-    elif [[ $sl == *"filter.list created" ]]; then
-      local sl_reason="$(ct "filter.list" "b") $(ct "created" "g")"
-    elif [[ $sl == *".config active" ]]; then
-      local sl_config=$(echo "$sl" | awk -F 'privoxy ' '{print $2}' | awk -F ' active' '{print $1}')
-      local sl_reason="status $(ct "$sl_config" "b") $(ct "active" "g")"
-    elif [[ $sl == *"set configuration"* && $sl == *active ]]; then
-      local sl_reason="${sl:41:17} $(ct "${sl:59:$((${#sl}-6-60))}" "b") $(ct "${sl:${#sl}-6:8}" "g")"
+    elif [[ $sl == *"config.bak created" ]]; then
+      local sl_reason="$(ct "config.bak" "b") $(ct "created" "g")"
+    elif [[ $sl == *"config"* && *"active" ]]; then
+      local sl_center="${sl#*config}" && sl_center="${sl_center%active*}"
+      local sl_reason="config $(ct $sl_center "b") $(ct "active" "g")"
+    elif [[ $sl == *"filter"* && *"created" ]]; then
+      local sl_center="${sl#*filter}" && sl_center="${sl_center%created*}"
+      local sl_reason="filter $(ct $sl_center "b") $(ct "created" "g")"
     else
       local sl_reason=""
     fi
     
     if [[ $1 == 0 ]]; then
-      sl="$sl_date privoxy $sl_reason"
+      sl="$sl_date   $sl_reason"
     elif [[ $i -eq 1 && $1 == 1 ]]; then
-      sl="         log: $sl_date privoxy $sl_reason"
+      sl="         log: $sl_date   $sl_reason"
     elif [[ $i -gt 1 && $1 == 1 ]]; then
-      sl="              $sl_date privoxy $sl_reason"
+      sl="              $sl_date   $sl_reason"
     fi
 
     echo -e "$sl"
