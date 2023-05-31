@@ -1,7 +1,12 @@
 # privoxy-pilot-macos
 A bash script and set of templates to better manage Privoxy on macOS.
 
-**This project is still in its beginnings. If you have a question please ask. If you are not comfortable working in the terminal than ask someone that is to help you.** 
+**Do not use anything from this project until this notice is removed!**
+
+**This project is still in active development and is not ready for public use in any way, shape or form. It is made public for very limited testing only. If you do use it in its current state it will break things. Some of the options listed are not currently functioning.**
+
+
+This project is still in its beginnings. If you have a question please ask. If you are not comfortable working in the terminal than ask someone that is to help you.
 
 Privoxy is a wonderful project to which I'm in debt to its contributors. My project simply makes managing Privoxy's settings on macOS a bit easier. Features include:
 
@@ -94,6 +99,17 @@ You should see "privoxy started" which confirms it is running. If you see "privo
    
    `/usr/local/etc/privoxy/privoxy.sh filter list"` 
  
-2. Create a new filter list named "work":
+2. Create a new filter list named "work" [or whatever you want to name it]:
 
     `/usr/local/etc/privoxy/privoxy.sh filter work"` 
+
+3. Open your new list and follow the instructions in the comments of the file you just created on how to add the websites you wish to block.
+
+## Creating a new filter group
+
+   1. edit the config.mod file and follow the instructions in the comments: 
+
+    `nano /usr/local/etc/privoxy/config.mod`
+
+
+
