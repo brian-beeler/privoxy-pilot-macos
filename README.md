@@ -88,7 +88,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
     <BR>
     <BR>
 
-    If you don't want to accept any connections from your local network or are on a dynamic IP address:
+    If you don't want to accept any connections from your local network or don't have a static IP address:
 
     `mv /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.original`
 
@@ -116,7 +116,9 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
         This will perform a check for configuration files required to run then return a list of options
 
-   2. Run Privoxy Pilot to have the "default" filter list group activated: `/usr/local/etc/privoxy/privoxy.sh config set default && /usr/local/etc/privoxy/privoxy.sh status`
+   2. Run Privoxy Pilot to have the "default" filter list group activated:  
+   
+        `/usr/local/etc/privoxy/privoxy.sh config set default && /usr/local/etc/privoxy/privoxy.sh status`
 
         This will configure Privoxy to use the default filter set which consists of lists from Block List Project and a local file "/usr/local/etc/privoxy/filters/mylist" where you can add websites you want blocked. Locally created and managed filter lists are found in "/usr/local/etc/privoxy/filters". Block List Project filters are stored in "/usr/local/etc/privoxy/filters/blp" and should not be edited as they are automatically updated every week.
 
