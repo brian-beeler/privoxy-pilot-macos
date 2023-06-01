@@ -54,11 +54,11 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 1. Download the Privoxy script: 
    
-    `curl -o "/usr/local/etc/privoxy/privoxy.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy.sh"`
+    `curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"`
 
 2. Set Privoxy Pilot to execute by: 
    
-   `chmod uog+x /usr/local/etc/privoxy/privoxy.sh`
+   `chmod uog+x /usr/local/etc/privoxy/ppilot.sh`
 
 3. To allow Privoxy to accept connections with clients on your local network (recommended but only if you have a static IP address):
 
@@ -112,13 +112,13 @@ When stable I plan on using what has been done here and building the privoxy-pil
   
   1. Run Privoxy Pilot to perform its initial setup and see a list of command line options: 
    
-        `/usr/local/etc/privoxy/privoxy.sh config setup && /usr/local/etc/privoxy/privoxy.sh`
+        `/usr/local/etc/privoxy/ppilot.sh config setup && /usr/local/etc/privoxy/ppilot.sh`
 
         This will perform a check for configuration files required to run then return a list of options
 
    2. Run Privoxy Pilot to have the "default" filter list group activated:  
    
-        `/usr/local/etc/privoxy/privoxy.sh config set default && /usr/local/etc/privoxy/privoxy.sh status`
+        `/usr/local/etc/privoxy/ppilot.sh config set default && /usr/local/etc/privoxy/ppilot.sh status`
 
         This will configure Privoxy to use the default filter set which consists of lists from Block List Project and a local file "/usr/local/etc/privoxy/filters/mylist" where you can add websites you want blocked. Locally created and managed filter lists are found in "/usr/local/etc/privoxy/filters". Block List Project filters are stored in "/usr/local/etc/privoxy/filters/blp" and should not be edited as they are automatically updated every week.
 
@@ -128,11 +128,11 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 1. View a list of existing local filter groups and lists: 
    
-   `/usr/local/etc/privoxy/privoxy.sh config list` 
+   `/usr/local/etc/privoxy/ppilot.sh config list` 
  
 2. Create a new filter list named "work" [or whatever you want to name it]:
 
-    `/usr/local/etc/privoxy/privoxy.sh filter work` 
+    `/usr/local/etc/privoxy/ppilot.sh filter work` 
 
 3. Open your new list and follow the instructions in the comments of the file you just created on how to add the websites you wish to block.
 

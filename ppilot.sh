@@ -1,25 +1,98 @@
 #!/bin/bash
-# copyright 2023 Brian Beeler under CC BY-SA license
-#
+
+# copyright © Brian Beeler 2023 under CC BY-SA license
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+# Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+# Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+# Neither the name of copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 # This project is still in its very beginnings and only made public for developement purposes. 
 # Do not use anything here until this notice is remove. If you do it will break things.
-# 
 
 # date and date sensitive values
 date_epoch=$(date +%s)
 date_stamp_long=$(date -r "$date_epoch" +"%a %b %d %Y %H:%M:%S %Z")
 date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
+config_original_file="/usr/local/etc/privoxy/config.original"
+config_bak_file="/usr/local/etc/privoxy/config.bak"
+config_tmp_file="/usr/local/etc/privoxy/config.tmp"
+config_file="/usr/local/etc/privoxy/config"
+config_mod_file="/usr/local/etc/privoxy/config.mod"
+log_file="/var/log/privoxy.log"
 
 # checking for log file exsistance
-if [ ! -f "/var/log/privoxy.log" ]; then
-    touch "/var/log/privoxy.log"
-    chmod a+rw "/var/log/privoxy.log"
-    echo "$date_stamp_long     created log file"  >> /var/log/privoxy.log
+if [ ! -f $log_file ]; then
+  touch $log_file
+  chmod og+rw $log_file
+  echo "$date_stamp_long      $log_file created" >> $log_file
 fi
 
 # checks for /usr/local/etc/privoxy/filters/ and creates if not found
 if [ ! -d "/usr/local/etc/privoxy/filters/" ]; then
-    mkdir -p "/usr/local/etc/privoxy/filters/"
+  mkdir -p "/usr/local/etc/privoxy/filters/"
+  mkdir -p "/usr/local/etc/privoxy/filters/blp"
+  echo "$date_stamp_long     /usr/local/etc/privoxy/filters/ created"  >> $log_file
+  echo "$date_stamp_long     /usr/local/etc/privoxy/filters/blp/ created"  >> $log_file
+fi
+
+# checks for $config_original_file, $config_bak_file and config_file. 
+# if all are missing something really, really wrong has happenned
+# Privoxy config version 3.0.34 used
+if [ ! -f $config_original_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_file ]; then
+  curl --no-progress-meter -o $config_original_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
+  cp $config_original_file $config_bak_file
+  cp $config_original_file $config_file
+  chmod og+rw $config_file
+  chmod og+rw $config_original_file
+  chmod og+rw $config_bak_file
+  gzip $config_original_file
+  # macOS seems to have an issue with this
+  chmod a-w $config_original_file
+  echo "$date_stamp_long     $config_file created"  >> $log_file
+  echo "$date_stamp_long     $config_original_file created"  >> $log_file
+  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+fi
+# checks for $config_file and $config_original_file. if neither found copy $config_file to $config_original_file and $config_bak_file
+# most likely only happening on ppilot.sh inital run
+if [ ! -f $config_original_file ] && [ ! -f $config_bak_file ]; then
+  cp $config_file $config_original_file
+  cp $config_file $config_bak_file
+  chmod og+rw $config_original_file
+  chmod og+rw $config_bak_file
+  gzip $config_original_file
+  # macOS seems to have an issue with this
+  chmod a-w $config_original_file
+  echo "$date_stamp_long     $config_original_file created"  >> $log_file
+  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+fi
+# checks for config.bak and creates if not found
+if [ ! -f $config_bak_file ]; then
+  gzip -d $config_original_file
+  cp $config_original_file $config_bak_file
+  chmod a+rw $config_bak_file
+  gzip $config_original_file
+  # macOS seems to have an issue with this
+  chmod a-w $config_original_file
+  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+fi
+# checks for config.mod and creates if not found
+if [ ! -f $config_mod_file ]; then
+  echo -e "$(ct "getting" "g") $(ct "config.mod" "b")"
+  curl --no-progress-meter -o $config_mod_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config.mod"
+  echo "$date_stamp_long     $config_mod_file created"  >> $log_file
+fi
+# checks for mylist filter list and creates if not found
+if [ ! -f "/usr/local/etc/privoxy/filters/mylist" ]; then
+  echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
+  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
+  echo "$date_stamp_long     /usr/local/etc/privoxy/filters/mylist created"  >> $log_file
+fi
+# checks for distractions filter list and creates if not found
+if [ ! -f "/usr/local/etc/privoxy/filters/distractions" ]; then
+  echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
+  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
+  echo "$date_stamp_long     /usr/local/etc/privoxy/filters/distractions created"  >> $log_file
 fi
 
 # functions:
@@ -56,7 +129,7 @@ function blpfl() {
     echo "# " >> $filter_file_name
     echo "  " >> $filter_file_name
     cat "/usr/local/etc/privoxy/filters/blp/$1-nl.txt" >> $filter_file_name
-    echo "$date_stamp_long     filter created $filter_file_name" >> /var/log/privoxy.log
+    echo "$date_stamp_long     filter created $filter_file_name" >> $log_file
     rm "/usr/local/etc/privoxy/filters/blp/$1-nl.txt"
   fi
 }
@@ -77,28 +150,6 @@ function config() {
 # 
 local blp_fl=("abuse" "ads" "crypto" "drugs" "everything" "facebook" "fraud" "gambling" "malware" "phishing" "piracy" "porn" "ransomware" "redirect" "scam" "tiktok" "torrent" "tracking")
 # 
-# checks for config.bak and creates if not found
-if [ ! -f "/usr/local/etc/privoxy/config.bak" ]; then
-    cp "/usr/local/etc/privoxy/config" "/usr/local/etc/privoxy/config.bak"
-    chmod a+rw "/usr/local/etc/privoxy/config.bak"
-    echo "$date_stamp_long     config.bak created"  >> /var/log/privoxy.log
-fi
-# checks for config.mod and creates if not found
-if [ ! -f "/usr/local/etc/privoxy/config.mod" ]; then
-  echo -e "$(ct "getting" "g") $(ct "config.mod" "b")"
-  curl --no-progress-meter -o "/usr/local/etc/privoxy/config.mod" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config.mod"
-fi
-# checks for mylist filter list and creates if not found
-if [ ! -f "/usr/local/etc/privoxy/filters/mylist" ]; then
-  echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
-  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
-fi
-# checks for distractions filter list and creates if not found
-if [ ! -f "/usr/local/etc/privoxy/filters/distractions" ]; then
-  echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
-  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
-fi
-
 # if ./privoxy.sh config list is called
 if [[ "$2" = "list" ]]; then
   #TODO: everything 
@@ -114,7 +165,7 @@ if [[ "$2" = "list" ]]; then
       joined_elements=$(IFS=,; echo "${array[*]}")
       echo "$(ct "$line_tag" "b"): $(ct "$joined_elements" "g")"
     fi
-  done < "/usr/local/etc/privoxy/config.mod"
+  done < $config_mod_file
 
 fi
 
@@ -139,30 +190,31 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
       value=${line#*=}
       filter_list+=("$value")
     fi
-  done < "/usr/local/etc/privoxy/config.mod"
+  done < $config_mod_file
 
   #cleans filter_list of \r
   filter_list=$(echo "$filter_list" | tr -d '\r')
   # write to a clean config
-  echo "# $date_stamp_long     $3 active" >> "/usr/local/etc/privoxy/config.tmp"
-  echo "# " >>  "/usr/local/etc/privoxy/config.tmp"
+  echo "# $date_stamp_long     $3 active" >> $config_tmp_file
+  echo "# " >>  $config_tmp_file
   IFS=',' read -ra filters <<< "$filter_list"
   for filter in "${filters[@]}"; do
     # if filter is in blp filter list 
     if [[ " ${blp_fl[@]} " =~ " $filter " ]]; then
       blpfl $filter
-      echo "actionsfile /usr/local/etc/privoxy/filters/blp/$filter" >> "/usr/local/etc/privoxy/config.tmp"
+      echo "actionsfile /usr/local/etc/privoxy/filters/blp/$filter" >> $config_tmp_file
     fi
     # 
     if [[ " ${filters_dir_files[@]} " =~ " $filter " ]]; then
-      echo "actionsfile /usr/local/etc/privoxy/filters/$filter" >> "/usr/local/etc/privoxy/config.tmp"
+      echo "actionsfile /usr/local/etc/privoxy/filters/$filter" >> $config_tmp_file
     fi
 
   done
-  echo " " >> "/usr/local/etc/privoxy/config.tmp"
-  echo " " >> "/usr/local/etc/privoxy/config.tmp"
-  cat "/usr/local/etc/privoxy/config.bak" >> "/usr/local/etc/privoxy/config.tmp"
-  mv /usr/local/etc/privoxy/config.tmp /usr/local/etc/privoxy/config
+  echo " " >> $config_tmp_file
+  echo " " >> $config_tmp_file
+  echo " " >> $config_tmp_file
+  cat $config_bak_file >> $config_tmp_file
+  mv $config_tmp_file $config_file
   lw "config $3 active"
   brew services restart privoxy
   lw "restart"
@@ -262,15 +314,14 @@ function lr() {
   # $1: "0" = no header, "1" = header
   # 
   # 
-  local log_file="/var/log/privoxy.log"
-  log_line_count=$(wc -l < "$log_file")
-  if (( log_line_count > 10 )); then
-    log_line_count=10
+  log_file_line_count=$(wc -l < "$log_file")
+  if (( log_file_line_count > 10 )); then
+    log_file_line_count=10
   fi
   
-  local log=$(tail -n $log_line_count $log_file)
+  local log=$(tail -n $log_file_line_count $log_file)
 
-  for ((i=1; i<=$log_line_count; i++)); do
+  for ((i=1; i<=$log_file_line_count; i++)); do
     line=$(echo "$log" | awk "NR==$i")
     local sl="$line"
     local sl_date=$(ct "${sl:0:10} ${sl:16:8}" "y")
@@ -320,13 +371,13 @@ function lr() {
 # log write. writes a log entry
 function lw() {
   # $1: text
-  echo "$date_stamp_long     privoxy $1"  >> /var/log/privoxy.log
+  echo "$date_stamp_long     privoxy $1"  >> $log_file
 }
 # end lw()
 
 # display status
 function status() {
-  local config_head=$(head -n 1 "/usr/local/etc/privoxy/config")
+  local config_head=$(head -n 1 $config_file)
   local filter_group="${config_head:35:$((${#config_head} - 6 - 36))}"
 # Read the file line by line
 while IFS= read -r line
@@ -336,16 +387,16 @@ do
     local filter_list="${line#"$filter_group="}"
     break
   fi
-done < "/usr/local/etc/privoxy/config.mod"
+done < $config_mod_file
 output=$(brew services list | grep privoxy)
 if [[ $output == *"started"* ]]; then
-  pid=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy --no-daemon /usr/local/etc/privoxy/config" | grep -v grep | awk '{print $1}')
+  pid=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy --no-daemon $config_file" | grep -v grep | awk '{print $1}')
   up_since=$(ps -p $pid -o lstart= | awk '{print $1,$2,$3,$4}')
   up_time=$(ps -p $pid -o etime= )
-  config_date=$(ls -lD "%a %b %d %H:%M:%S" /usr/local/etc/privoxy/config | awk '{print $6,$7,$8,$9}')
+  config_date=$(ls -lD "%a %b %d %H:%M:%S" $config_file | awk '{print $6,$7,$8,$9}')
   echo -e "         pid: $(ct "$pid" "y")"
   echo -e "          up: $(ct "$up_since" "y") ($(ct "$up_time" "y"))"
-  echo -e "      config: $(ct "$config_date" "y") ($(ct "$(dd "/usr/local/etc/privoxy/config")" "y"))"
+  echo -e "      config: $(ct "$config_date" "y") ($(ct "$(dd $config_file)" "y"))"
   echo -e "filter group: $(ct "$filter_group" "b")"
   echo -e "     filters: $(ct "$filter_list" "b")"  
   echo "              -------------------"
@@ -353,7 +404,7 @@ if [[ $output == *"started"* ]]; then
 elif [[ $output == *"none"* ]]; then
   #echo -e "OUTPUT: $output"
   #echo -e "$(color_text "$output" "error" "red")"
-  #echo -e "$date_stamp     privoxy status $(ct "error" "r")" >> /var/log/privoxy.log
+  #echo -e "$date_stamp     privoxy status $(ct "error" "r")" >> $log_file
   lw "status error"
 else
   echo -e "$(ct "$output" "r")"
