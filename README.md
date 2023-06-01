@@ -88,7 +88,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
     <BR>
     <BR>
 
-    If you don't want to accept any connections from your local network:
+    If you don't want to accept any connections from your local network or are on a dynamic IP address:
 
     `mv /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.original`
 
