@@ -57,8 +57,6 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 ### **Configure Privoxy Pilot to be accessed by other local network clients**
 
-<BR>
-
 Recommended but only if you have a static IP address. By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
 
 1. Download the Privoxy script: 
