@@ -247,16 +247,6 @@ function lr() {
     line=$(echo "$log" | awk "NR==$i")
     local sl="$line"
     local sl_date=$(ct "${sl:0:10} ${sl:16:8}" "y")
-
-# ✓ Thu Jan 01 1970 00:00:00 GMT     restart
-# ✓ Thu Jan 01 1970 00:00:00 GMT     start
-# ✓ Thu Jan 01 1970 00:00:00 GMT     stop
-# ✓ Thu Jan 01 1970 00:00:00 GMT     status error
-# ✓ # Thu Jan 01 1970 00:00:00 GMT     config default active
-# Thu Jan 01 1970 00:00:00 GMT     filter blp/facebook created
-# Thu Jan 01 1970 00:00:00 GMT     filter blah created
-# Thu Jan 01 1970 00:00:00 GMT     config.bak created
-
     if [[ $sl == *"restart" ]]; then
       local sl_reason=$(ct "restart" "g")
     elif [[ $sl == *"start" ]]; then
@@ -359,9 +349,9 @@ if [ ! -f $config_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_original
   curl --no-progress-meter -o $config_original_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
   cp $config_original_file $config_bak_file
   cp $config_original_file $config_file
-  chmod og+rw $config_file
-  chmod og+rw $config_original_file
-  chmod og+rw $config_bak_file
+  chmod ug+rw $config_file
+  chmod ug+rw $config_original_file
+  chmod ug+rw $config_bak_file
   gzip $config_original_file
   # macOS seems to have an issue with this
   chmod a-w $config_original_file.gz
@@ -374,8 +364,8 @@ fi
 if [[ -f "$config_file" ]] && [[ ! -f "$config_original_file" ]] && [[ ! -f "$config_original_file.gz" ]] ; then
   cp $config_file $config_original_file
   cp $config_file $config_bak_file
-  chmod og+rw $config_original_file
-  chmod og+rw $config_bak_file
+  chmod ug+rw $config_original_file
+  chmod ug+rw $config_bak_file
   gzip $config_original_file
   # macOS seems to have an issue with this
   chmod a-w $config_original_file.gz
