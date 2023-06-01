@@ -74,6 +74,10 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
     `cp /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.bak`
 
+    Or you can run the above commands from a single line:
+
+    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
+
     By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
 
     "**config.original**" is your Privoxy config file as installed
@@ -93,6 +97,10 @@ When stable I plan on using what has been done here and building the privoxy-pil
     `echo -e /usr/local/etc/privoxy/config.original >> /usr/local/etc/privoxy/config`
 
     `cp /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.bak`
+
+    Or you can run the above commands from a single line:
+
+    `https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh`
 
     "**config.original**" is your Privoxy config file as installed
 
