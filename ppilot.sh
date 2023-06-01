@@ -355,7 +355,7 @@ fi
 # checks for $config_original_file, $config_bak_file and config_file. 
 # if all are missing something really, really wrong has happenned
 # Privoxy config version 3.0.34 used
-if [ ! -f $config_original_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_file ]; then
+if [ ! -f $config_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_original_file ]; then
   curl --no-progress-meter -o $config_original_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
   cp $config_original_file $config_bak_file
   cp $config_original_file $config_file
@@ -369,9 +369,9 @@ if [ ! -f $config_original_file ] && [ ! -f $config_bak_file ] && [ ! -f $config
   echo "$date_stamp_long     $config_bak_file created"  >> $log_file
   echo "$date_stamp_long     $config_file created"  >> $log_file
 fi
-# checks for $config_original_file, $config_bak_file and $config_original_file. if neither found copy $config_file to $config_original_file and $config_bak_file
+# checks for $config_file, no $config_bak_file and no $config_original_file.
 # most likely only happens on ppilot.sh inital run
-if [[ ! -f "$config_and_file" ]] && ( [[ ! -f "$config_original_file" ]] || [[ ! -f "$config_original_file.gz" ]] ); then
+if [[ -f "$config_file" ]] && [[ ! -f "$config_original_file" ]] && [[ ! -f "$config_original_file.gz" ]] ; then
   cp $config_file $config_original_file
   cp $config_file $config_bak_file
   chmod og+rw $config_original_file
@@ -382,8 +382,8 @@ if [[ ! -f "$config_and_file" ]] && ( [[ ! -f "$config_original_file" ]] || [[ !
   echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
   echo "$date_stamp_long     $config_bak_file created"  >> $log_file
 fi
-# checks for config.bak and creates config.bak and config if not found
-if [ ! -f $config_bak_file ]; then
+# checks for config and mo config.bak. creates config.bak 
+if [[ -f "$config_file" ]] && [[ ! -f "$config_bak_file" ]]; then
   gzip -d $config_original_file
   cp $config_original_file $config_bak_file
   cp $config_original_file $config_file
