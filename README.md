@@ -51,13 +51,13 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 <BR>
 
-## **Installing Privoxy Pilot**
+## **Configure Privoxy and install Privoxy Pilot**
 
-<BR>
+Your choices are to either allow Privoxy to be accessible to clients on your local network or only by the Mac on which it is installed. It is recommended that Privoxy be accessible to clients on your local network **but only if you have a static IP address.** By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
 
-### **Configure Privoxy Pilot to be accessed by other local network clients**
+If you're unsure if your IP address is static then follow the instructions in "Configure Privoxy Pilot for single host use only."
 
-Recommended but only if you have a static IP address. By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
+### **Configure Privoxy to be accessed by other local network clients and install Privoxy Pilot**
 
 1. Download the Privoxy script: 
    
@@ -94,9 +94,7 @@ Recommended but only if you have a static IP address. By allowing connections fr
     
 <BR>
 
-### **Configure Privoxy Pilot for single host use only**
-
-<BR>
+### **Configure Privoxy for single host use only and install Privoxy Pilot**
 
 If you don't want to accept any connections from your local network or don't have a static IP address:
 
@@ -132,13 +130,12 @@ If you don't want to accept any connections from your local network or don't hav
   
 ### **Configure Privoxy Pilot for initial start**
 
-<BR>
 
   1. Run Privoxy Pilot status: 
    
         `/usr/local/etc/privoxy/ppilot.sh status`
 
-        This will perform a check for configuration files required to run and display what actions took place in the "log" section of status
+        This will perform a series of checks for the configuration files required to run and display what actions took place in the "log" section of status
 
    2. Run Privoxy Pilot to have the "default" filter list group activated:  
    
