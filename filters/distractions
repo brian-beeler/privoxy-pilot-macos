@@ -9,7 +9,7 @@
 # .tiktik.com will block all sites ending in that domain
 # www.tiktok.com will block just that site and not others in that domain
 #
-.tiktok.com
 www.youtube.com
 m.youtube.com
 youtu.be
+.tiktok.com

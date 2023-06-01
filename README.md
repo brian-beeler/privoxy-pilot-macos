@@ -1,5 +1,5 @@
 # **privoxy-pilot-macos**
-A bash script and set of templates to better manage Privoxy on macOS.
+Privoxy Pilot bash script and set of templates to better manage Privoxy on macOS. It is not connected to the Privoxy project.
 
 <BR>
 
@@ -10,6 +10,7 @@ A bash script and set of templates to better manage Privoxy on macOS.
 **This project is still in active development and is not ready for public use in any way, shape or form. It is made public for very limited testing only. If you do use it in its current state it will break things and when that happens you are on your own. Some of the options listed are not currently functioning.**
 
 ---
+
 <BR>
 
 This project is still in its beginnings. If you have a question please ask. If you are not comfortable working in the terminal than ask someone that is to help you.
@@ -52,15 +53,23 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 ## **Installing Privoxy Pilot**
 
+<BR>
+
+### **Configure Privoxy Pilot to be accessed by other local network clients**
+
+<BR>
+
+Recommended but only if you have a static IP address. By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
+
 1. Download the Privoxy script: 
    
     `curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"`
 
 2. Set Privoxy Pilot to execute by: 
    
-   `chmod uog+x /usr/local/etc/privoxy/ppilot.sh`
+   `chmod og+x /usr/local/etc/privoxy/ppilot.sh`
 
-3. To allow Privoxy to accept connections with clients on your local network (recommended but only if you have a static IP address):
+3. Add some head room to config and allow Privoxy to accept connections with clients on your local network:
 
     `mv /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.original`
 
@@ -78,17 +87,30 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
     `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
 
-    By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
 
     "**config.original**" is your Privoxy config file as installed
 
     "**config**" is your Privoxy config file as installed with the addition of "listen-address" to allow for local area network connections
     
     "**config.bak**" is a backup of your modified config file
-    <BR>
-    <BR>
+    
+<BR>
 
-    If you don't want to accept any connections from your local network or don't have a static IP address:
+### **Configure Privoxy Pilot for single host use only**
+
+<BR>
+
+If you don't want to accept any connections from your local network or don't have a static IP address:
+
+1. Download the Privoxy script: 
+   
+    `curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"`
+
+2. Set Privoxy Pilot to execute by: 
+   
+    `chmod og+x /usr/local/etc/privoxy/ppilot.sh`
+
+3. Add some head room in config:
 
     `mv /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.original`
 
@@ -107,20 +129,60 @@ When stable I plan on using what has been done here and building the privoxy-pil
     "**config**" is your Privoxy config file as installed with the addition of some header space
 
     "**config.bak**" is a backup of your modified config file
-    <BR>
-    <BR>
+    
+<BR>
   
-  1. Run Privoxy Pilot to perform its initial setup and see a list of command line options: 
-   
-        `/usr/local/etc/privoxy/ppilot.sh config setup && /usr/local/etc/privoxy/ppilot.sh`
+### **Configure Privoxy Pilot for initial start**
 
-        This will perform a check for configuration files required to run then return a list of options
+<BR>
+
+  1. Run Privoxy Pilot status: 
+   
+        `/usr/local/etc/privoxy/ppilot.sh status`
+
+        This will perform a check for configuration files required to run and display what actions took place in the "log" section of status
 
    2. Run Privoxy Pilot to have the "default" filter list group activated:  
    
         `/usr/local/etc/privoxy/ppilot.sh config set default && /usr/local/etc/privoxy/ppilot.sh status`
 
         This will configure Privoxy to use the default filter set which consists of lists from Block List Project and a local file "/usr/local/etc/privoxy/filters/mylist" where you can add websites you want blocked. Locally created and managed filter lists are found in "/usr/local/etc/privoxy/filters". Block List Project filters are stored in "/usr/local/etc/privoxy/filters/blp" and should not be edited as they are automatically updated every week.
+
+<BR>
+
+## **Options**
+
+`/usr/local/etc/privoxy/ppilot.sh`
+
+display list of options
+
+`/usr/local/etc/privoxy/ppilot.sh start`
+
+start server
+
+`/usr/local/etc/privoxy/ppilot.sh stop`
+
+stop server
+
+`/usr/local/etc/privoxy/ppilot.sh restart`
+
+restart server
+
+`/usr/local/etc/privoxy/ppilot.sh status`
+
+status of server
+
+`/usr/local/etc/privoxy/ppilot.sh config list`
+
+list filter groups
+
+`/usr/local/etc/privoxy/ppilot.sh filter <name>`
+
+create new filter list with <name>
+
+`/usr/local/etc/privoxy/ppilot.sh log`
+
+display log
 
 <BR>
 
@@ -146,7 +208,27 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 <BR>
 
-## **Options**
+## **Editing Privoxy options after Privoxy Pilot has been run**
+
+While not common editing the original Privoxy config file is sometimes necessary. It's important to edit the config file that was created on Privoxy's installation. The original config file untouched by Privoxy Pilot is stored in "/usr/local/etc/privoxy/config.original.gz". To edit:
+
+Uncompress config.original:
+
+`gzip -d /usr/local/etc/privoxy/config.original.gz`
+
+Edit config.original. Be careful as this is your original or "root" Privoxy config file. I'd suggest that all edits go at the top as that will make finding those edits at a later date.
+
+`nano /usr/local/etc/privoxy/config.original`
+
+Compress config.original:
+
+`gzip /usr/local/etc/privoxy/config.original`
+
+Delete config.bak and config. Running "ppilot.sh status" will recreate those files and display that action in the log section of status.
+
+`rm /usr/local/etc/privoxy/config.bak && rm /usr/local/etc/privoxy/config && /usr/local/etc/ppilot.sh status`
+
+You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/privoxy/config created" in the log section of status.
 
 
 

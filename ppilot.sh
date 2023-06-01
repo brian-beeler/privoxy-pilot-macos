@@ -20,6 +20,8 @@ config_tmp_file="/usr/local/etc/privoxy/config.tmp"
 config_file="/usr/local/etc/privoxy/config"
 config_mod_file="/usr/local/etc/privoxy/config.mod"
 log_file="/var/log/privoxy.log"
+filters_dir="/usr/local/etc/privoxy/filters"
+filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
 
 # checking for log file exsistance
 if [ ! -f $log_file ]; then
@@ -28,12 +30,12 @@ if [ ! -f $log_file ]; then
   echo "$date_stamp_long      $log_file created" >> $log_file
 fi
 
-# checks for /usr/local/etc/privoxy/filters/ and creates if not found
-if [ ! -d "/usr/local/etc/privoxy/filters/" ]; then
-  mkdir -p "/usr/local/etc/privoxy/filters/"
-  mkdir -p "/usr/local/etc/privoxy/filters/blp"
-  echo "$date_stamp_long     /usr/local/etc/privoxy/filters/ created"  >> $log_file
-  echo "$date_stamp_long     /usr/local/etc/privoxy/filters/blp/ created"  >> $log_file
+# checks for $filters_dir and $filters_blp_dir created. creates if not found
+if [ ! -d $filters_dir ]; then
+  mkdir -p $filters_dir
+  mkdir -p $filters_blp_dir
+  echo "$date_stamp_long     $filters_dir created"  >> $log_file
+  echo "$date_stamp_long     $filters_blp_dir created"  >> $log_file
 fi
 
 # checks for $config_original_file, $config_bak_file and config_file. 
@@ -48,33 +50,36 @@ if [ ! -f $config_original_file ] && [ ! -f $config_bak_file ] && [ ! -f $config
   chmod og+rw $config_bak_file
   gzip $config_original_file
   # macOS seems to have an issue with this
-  chmod a-w $config_original_file
-  echo "$date_stamp_long     $config_file created"  >> $log_file
-  echo "$date_stamp_long     $config_original_file created"  >> $log_file
+  chmod a-w $config_original_file.gz
+  echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
   echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+  echo "$date_stamp_long     $config_file created"  >> $log_file
 fi
-# checks for $config_file and $config_original_file. if neither found copy $config_file to $config_original_file and $config_bak_file
-# most likely only happening on ppilot.sh inital run
-if [ ! -f $config_original_file ] && [ ! -f $config_bak_file ]; then
+# checks for $config_original_file, $config_bak_file and $config_original_file. if neither found copy $config_file to $config_original_file and $config_bak_file
+# most likely only happens on ppilot.sh inital run
+if [[ ! -f "$config_and_file" ]] && ( [[ ! -f "$config_original_file" ]] || [[ ! -f "$config_original_file.gz" ]] ); then
   cp $config_file $config_original_file
   cp $config_file $config_bak_file
   chmod og+rw $config_original_file
   chmod og+rw $config_bak_file
   gzip $config_original_file
   # macOS seems to have an issue with this
-  chmod a-w $config_original_file
-  echo "$date_stamp_long     $config_original_file created"  >> $log_file
+  chmod a-w $config_original_file.gz
+  echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
   echo "$date_stamp_long     $config_bak_file created"  >> $log_file
 fi
-# checks for config.bak and creates if not found
+# checks for config.bak and creates config.bak and config if not found
 if [ ! -f $config_bak_file ]; then
   gzip -d $config_original_file
   cp $config_original_file $config_bak_file
+  cp $config_original_file $config_file
   chmod a+rw $config_bak_file
+  chmod a+rw $config_file
   gzip $config_original_file
   # macOS seems to have an issue with this
-  chmod a-w $config_original_file
+  chmod a-w $config_original_file.gz
   echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+  echo "$date_stamp_long     $config_file created"  >> $log_file
 fi
 # checks for config.mod and creates if not found
 if [ ! -f $config_mod_file ]; then
@@ -83,16 +88,16 @@ if [ ! -f $config_mod_file ]; then
   echo "$date_stamp_long     $config_mod_file created"  >> $log_file
 fi
 # checks for mylist filter list and creates if not found
-if [ ! -f "/usr/local/etc/privoxy/filters/mylist" ]; then
+if [ ! -f "$filters_dir/mylist" ]; then
   echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
-  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
-  echo "$date_stamp_long     /usr/local/etc/privoxy/filters/mylist created"  >> $log_file
+  curl --no-progress-meter -o "$filters_dir/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
+  echo "$date_stamp_long     $filters_dir/mylist created"  >> $log_file
 fi
 # checks for distractions filter list and creates if not found
-if [ ! -f "/usr/local/etc/privoxy/filters/distractions" ]; then
+if [ ! -f "$filters_dir/distractions" ]; then
   echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
-  curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
-  echo "$date_stamp_long     /usr/local/etc/privoxy/filters/distractions created"  >> $log_file
+  curl --no-progress-meter -o "$filters_dir/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
+  echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
 fi
 
 # functions:
@@ -107,19 +112,13 @@ fi
 
 # download and create blp filter list
 function blpfl() {
-  # $1 filter to download ie: "ads" would download "https://blocklistproject.github.io/Lists/alt-version/ads-nl.txt"
-
-  if [ ! -d "/usr/local/etc/privoxy/filters/blp" ]; then
-    mkdir -p "/usr/local/etc/privoxy/filters/blp"
-  fi
-
-  local filter_file_name="/usr/local/etc/privoxy/filters/blp/$1"
+  local filter_file_name="$filters_blp_dir/$1"
   # file age or if file is missing set Unix epoch date at 0 (1970-01-01 00:00:00)
   local filter_file_date=$(stat -f "%m" "$filter_file_name" 2>/dev/null || echo 0)
   # 604800 = 7 days
   if [ $((date_epoch - filter_file_date)) -gt 604800 ]; then
     echo -e "$(ct "downloading" "g") $(ct "$1" "b")"
-    curl --no-progress-meter -o "/usr/local/etc/privoxy/filters/blp/$1-nl.txt" "https://blocklistproject.github.io/Lists/alt-version/$1-nl.txt"
+    curl --no-progress-meter -o "$filters_blp_dir/$1-nl.txt" "https://blocklistproject.github.io/Lists/alt-version/$1-nl.txt"
     touch "$filter_file_name"
     echo "# $1" >> $filter_file_name
     echo "# created: $date_stamp_long" >> $filter_file_name
@@ -128,9 +127,9 @@ function blpfl() {
     echo "# " >> $filter_file_name
     echo "# " >> $filter_file_name
     echo "  " >> $filter_file_name
-    cat "/usr/local/etc/privoxy/filters/blp/$1-nl.txt" >> $filter_file_name
+    cat "$filters_blp_dir/$1-nl.txt" >> $filter_file_name
     echo "$date_stamp_long     filter created $filter_file_name" >> $log_file
-    rm "/usr/local/etc/privoxy/filters/blp/$1-nl.txt"
+    rm "$filters_blp_dir/$1-nl.txt"
   fi
 }
 # end blpfl()
@@ -146,7 +145,7 @@ function config() {
 #         -c filters        updates blp filter lists
 # 
 # TODO: set = cp config.bak config, read config.mod, choose line, write:
-#   actionsfile /usr/local/etc/privoxy/filters/(name).filter to top of config
+#   actionsfile $filters_dir/(name) to top of config
 # 
 local blp_fl=("abuse" "ads" "crypto" "drugs" "everything" "facebook" "fraud" "gambling" "malware" "phishing" "piracy" "porn" "ransomware" "redirect" "scam" "tiktok" "torrent" "tracking")
 # 
@@ -173,13 +172,13 @@ fi
 if [ "$2" = "set" ] && [ -n "$3" ]; then
   local filter_list=()
 
-  # copies listing of file names in /usr/local/etc/privoxy/filters/ to filters_dir_files
-  local declare filters_dir_files
-  dir_list=$(ls -p /usr/local/etc/privoxy/filters/ | grep -v /)  
+  # copies listing of file names in $filters_dir to filters_dir_file_names
+  local declare filters_dir_file_names
+  dir_list=$(ls -p $filters_dir | grep -v /)  
   for item in $dir_list; do
-    filters_dir_files+=("$item")
+    filters_dir_file_names+=("$item")
   done
-  #echo "filters_dir_files: ${filters_dir_files[@]}"
+  #echo "filters_dir_file_names: ${filters_dir_file_names[@]}"
 
   # reads config.mod and saves filters to $filter_list
   while IFS= read -r line; do
@@ -202,11 +201,11 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
     # if filter is in blp filter list 
     if [[ " ${blp_fl[@]} " =~ " $filter " ]]; then
       blpfl $filter
-      echo "actionsfile /usr/local/etc/privoxy/filters/blp/$filter" >> $config_tmp_file
+      echo "actionsfile $filters_blp_dir/$filter" >> $config_tmp_file
     fi
     # 
-    if [[ " ${filters_dir_files[@]} " =~ " $filter " ]]; then
-      echo "actionsfile /usr/local/etc/privoxy/filters/$filter" >> $config_tmp_file
+    if [[ " ${filters_dir_file_names[@]} " =~ " $filter " ]]; then
+      echo "actionsfile $filters_dir/$filter" >> $config_tmp_file
     fi
 
   done
@@ -272,16 +271,16 @@ function dd() {
 # 
 function ft() {
   # $1 is filter/file name
-  # copies listing of file names in /usr/local/etc/privoxy/filters/ to filters_dir_files
-  local declare filters_dir_files
-  dir_list=$(ls -p /usr/local/etc/privoxy/filters/ | grep -v /)  
+  # copies listing of file names in $filters_dir to filters_dir_file_names
+  local declare filters_dir_file_names
+  dir_list=$(ls -p $filters_dir | grep -v /)  
   for item in $dir_list; do
-    filters_dir_files+=("$item")
+    filters_dir_file_names+=("$item")
   done
-  filters_dir_files+=("blp")
+  filters_dir_file_names+=("blp")
   match_found=false
   if [ -n "$1" ]; then
-    for item in "${filters_dir_files[@]}"; do
+    for item in "${filters_dir_file_names[@]}"; do
     if [[ "$item" == "$1" ]]; then
       match_found=true
       break
@@ -290,18 +289,18 @@ function ft() {
     if $match_found; then
       echo $(ct "There is already a filter list or folder named $1." "y")
     else
-      echo "# /usr/local/etc/privoxy/filters/$1"  >> /usr/local/etc/privoxy/filters/$1
-      echo "# "  >> /usr/local/etc/privoxy/filters/$1
-      echo "# this file contains a group of user selected sites to block"  >> /usr/local/etc/privoxy/filters/$1
-      echo "# "  >> /usr/local/etc/privoxy/filters/$1
-      echo "# details for the privoxy "blocked" page to display on why a site was blocked:"  >> /usr/local/etc/privoxy/filters/$1
-      echo "{ +block{site found in /usr/local/etc/privoxy/filters/$1.} }"  >> /usr/local/etc/privoxy/filters/$1
-      echo "# "  >> /usr/local/etc/privoxy/filters/$1
-      echo "# .example.com will block all sites ending in that domain"  >> /usr/local/etc/privoxy/filters/$1
-      echo "# www.example.com will block just that site and not others in that domain"  >> /usr/local/etc/privoxy/filters/$1
-      echo "# "  >> /usr/local/etc/privoxy/filters/$1
-      echo ".example.com"  >> /usr/local/etc/privoxy/filters/$1
-      echo $(ct "/usr/local/etc/privoxy/filters/$1 created" "g")
+      echo "# $filters_dir/$1"  >> $filters_dir/$1
+      echo "# "  >> $filters_dir/$1
+      echo "# this file contains a group of user selected sites to block"  >> $filters_dir/$1
+      echo "# "  >> $filters_dir/$1
+      echo "# details for the privoxy "blocked" page to display on why a site was blocked:"  >> $filters_dir/$1
+      echo "{ +block{site found in $filters_dir/$1.} }"  >> $filters_dir/$1
+      echo "# "  >> $filters_dir/$1
+      echo "# .example.com will block all sites ending in that domain"  >> $filters_dir/$1
+      echo "# www.example.com will block just that site and not others in that domain"  >> $filters_dir/$1
+      echo "# "  >> $filters_dir/$1
+      echo ".example.com"  >> $filters_dir/$1
+      echo $(ct "$filters_dir/$1 created" "g")
     fi
     else
       echo $(ct "Please supply a filter list name" "y")
@@ -448,10 +447,10 @@ elif [[ $1 == "filter" ]]; then
 
 # 
 else
-  echo "usage: ./privoxy.sh [start|stop|restart|status|config|filter|log]"
+  echo "usage: ./ppilot.sh [start|stop|restart|status|config|filter|log]"
   echo "  start                   start server"
   echo "  stop                    stop server"
-  echo "  restart                 restart"
+  echo "  restart                 restart server"
   echo "  status                  display privoxy status"
   echo "  config list             list filter groups"
   echo "  config set <group>      set filter group"
