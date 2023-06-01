@@ -3,7 +3,7 @@
 #a script to setup Privoxy for Privoxy-Pilot
 
 curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"
-chmod a+x /usr/local/etc/privoxy/ppilot.sh
+chmod ug+x /usr/local/etc/privoxy/ppilot.sh
 if [ -f "/usr/local/etc/privoxy/config" ]; then
   mv /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.original
 fi

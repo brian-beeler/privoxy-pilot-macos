@@ -23,83 +23,6 @@ log_file="/var/log/privoxy.log"
 filters_dir="/usr/local/etc/privoxy/filters"
 filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
 
-# checking for log file exsistance
-if [ ! -f $log_file ]; then
-  touch $log_file
-  chmod og+rw $log_file
-  echo "$date_stamp_long      $log_file created" >> $log_file
-fi
-
-# checks for $filters_dir and $filters_blp_dir created. creates if not found
-if [ ! -d $filters_dir ]; then
-  mkdir -p $filters_dir
-  mkdir -p $filters_blp_dir
-  echo "$date_stamp_long     $filters_dir created"  >> $log_file
-  echo "$date_stamp_long     $filters_blp_dir created"  >> $log_file
-fi
-
-# checks for $config_original_file, $config_bak_file and config_file. 
-# if all are missing something really, really wrong has happenned
-# Privoxy config version 3.0.34 used
-if [ ! -f $config_original_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_file ]; then
-  curl --no-progress-meter -o $config_original_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
-  cp $config_original_file $config_bak_file
-  cp $config_original_file $config_file
-  chmod og+rw $config_file
-  chmod og+rw $config_original_file
-  chmod og+rw $config_bak_file
-  gzip $config_original_file
-  # macOS seems to have an issue with this
-  chmod a-w $config_original_file.gz
-  echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
-  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
-  echo "$date_stamp_long     $config_file created"  >> $log_file
-fi
-# checks for $config_original_file, $config_bak_file and $config_original_file. if neither found copy $config_file to $config_original_file and $config_bak_file
-# most likely only happens on ppilot.sh inital run
-if [[ ! -f "$config_and_file" ]] && ( [[ ! -f "$config_original_file" ]] || [[ ! -f "$config_original_file.gz" ]] ); then
-  cp $config_file $config_original_file
-  cp $config_file $config_bak_file
-  chmod og+rw $config_original_file
-  chmod og+rw $config_bak_file
-  gzip $config_original_file
-  # macOS seems to have an issue with this
-  chmod a-w $config_original_file.gz
-  echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
-  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
-fi
-# checks for config.bak and creates config.bak and config if not found
-if [ ! -f $config_bak_file ]; then
-  gzip -d $config_original_file
-  cp $config_original_file $config_bak_file
-  cp $config_original_file $config_file
-  chmod a+rw $config_bak_file
-  chmod a+rw $config_file
-  gzip $config_original_file
-  # macOS seems to have an issue with this
-  chmod a-w $config_original_file.gz
-  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
-  echo "$date_stamp_long     $config_file created"  >> $log_file
-fi
-# checks for config.mod and creates if not found
-if [ ! -f $config_mod_file ]; then
-  echo -e "$(ct "getting" "g") $(ct "config.mod" "b")"
-  curl --no-progress-meter -o $config_mod_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config.mod"
-  echo "$date_stamp_long     $config_mod_file created"  >> $log_file
-fi
-# checks for mylist filter list and creates if not found
-if [ ! -f "$filters_dir/mylist" ]; then
-  echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
-  curl --no-progress-meter -o "$filters_dir/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
-  echo "$date_stamp_long     $filters_dir/mylist created"  >> $log_file
-fi
-# checks for distractions filter list and creates if not found
-if [ ! -f "$filters_dir/distractions" ]; then
-  echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
-  curl --no-progress-meter -o "$filters_dir/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
-  echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
-fi
-
 # functions:
 #   blpfl(): blp filter lists: download and edit blp filter lists
 #  config():      config list: list and choose .config list
@@ -413,6 +336,83 @@ fi
 
 
 # main (for lack of better words)
+
+# checking for log file exsistance
+if [ ! -f $log_file ]; then
+  touch $log_file
+  chmod og+rw $log_file
+  echo "$date_stamp_long      $log_file created" >> $log_file
+fi
+
+# checks for $filters_dir and $filters_blp_dir created. creates if not found
+if [ ! -d $filters_dir ]; then
+  mkdir -p $filters_dir
+  mkdir -p $filters_blp_dir
+  echo "$date_stamp_long     $filters_dir created"  >> $log_file
+  echo "$date_stamp_long     $filters_blp_dir created"  >> $log_file
+fi
+
+# checks for $config_original_file, $config_bak_file and config_file. 
+# if all are missing something really, really wrong has happenned
+# Privoxy config version 3.0.34 used
+if [ ! -f $config_original_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_file ]; then
+  curl --no-progress-meter -o $config_original_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
+  cp $config_original_file $config_bak_file
+  cp $config_original_file $config_file
+  chmod og+rw $config_file
+  chmod og+rw $config_original_file
+  chmod og+rw $config_bak_file
+  gzip $config_original_file
+  # macOS seems to have an issue with this
+  chmod a-w $config_original_file.gz
+  echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
+  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+  echo "$date_stamp_long     $config_file created"  >> $log_file
+fi
+# checks for $config_original_file, $config_bak_file and $config_original_file. if neither found copy $config_file to $config_original_file and $config_bak_file
+# most likely only happens on ppilot.sh inital run
+if [[ ! -f "$config_and_file" ]] && ( [[ ! -f "$config_original_file" ]] || [[ ! -f "$config_original_file.gz" ]] ); then
+  cp $config_file $config_original_file
+  cp $config_file $config_bak_file
+  chmod og+rw $config_original_file
+  chmod og+rw $config_bak_file
+  gzip $config_original_file
+  # macOS seems to have an issue with this
+  chmod a-w $config_original_file.gz
+  echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
+  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+fi
+# checks for config.bak and creates config.bak and config if not found
+if [ ! -f $config_bak_file ]; then
+  gzip -d $config_original_file
+  cp $config_original_file $config_bak_file
+  cp $config_original_file $config_file
+  chmod a+rw $config_bak_file
+  chmod a+rw $config_file
+  gzip $config_original_file
+  # macOS seems to have an issue with this
+  chmod a-w $config_original_file.gz
+  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+  echo "$date_stamp_long     $config_file created"  >> $log_file
+fi
+# checks for config.mod and creates if not found
+if [ ! -f $config_mod_file ]; then
+  echo -e "$(ct "getting" "g") $(ct "config.mod" "b")"
+  curl --no-progress-meter -o $config_mod_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config.mod"
+  echo "$date_stamp_long     $config_mod_file created"  >> $log_file
+fi
+# checks for mylist filter list and creates if not found
+if [ ! -f "$filters_dir/mylist" ]; then
+  echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
+  curl --no-progress-meter -o "$filters_dir/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
+  echo "$date_stamp_long     $filters_dir/mylist created"  >> $log_file
+fi
+# checks for distractions filter list and creates if not found
+if [ ! -f "$filters_dir/distractions" ]; then
+  echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
+  curl --no-progress-meter -o "$filters_dir/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
+  echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
+fi
 
 # start
 if [[ $1 == "start" ]]; then
