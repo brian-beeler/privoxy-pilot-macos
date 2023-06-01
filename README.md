@@ -100,7 +100,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
     Or you can run the above commands from a single line:
 
-    `https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh`
+    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh"`
 
     "**config.original**" is your Privoxy config file as installed
 
