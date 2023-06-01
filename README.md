@@ -1,4 +1,4 @@
-# privoxy-pilot-macos
+# **privoxy-pilot-macos**
 A bash script and set of templates to better manage Privoxy on macOS.
 
 <BR>
@@ -28,21 +28,25 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 ## **Installing Privoxy**
 
-1. Install Privoxy via brew:
+1. Install the [Homebrew](https://en.wikipedia.org/wiki/Homebrew_(package_manager)) package manager if not already installed:
+   
+   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
+2. Install Privoxy via brew:
 
     `brew install privoxy`
 
-2. After installation start privoxy via brew:
+3. After installation start privoxy via brew:
 
     `brew start privoxy`
 
-3. Execute the following command to see if Privoxy is running: 
+4. Execute the following command to see if Privoxy is running: 
 
     `brew services`
 
     You should see "privoxy started" which confirms it is running. If you see "privoxy error" either it did not start or possibly something went wrong during installation.
 
-4. Before continuing setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in your proxy settings or Privoxy itself.
+5. Before continuing setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in your proxy settings or Privoxy itself.
 
 <BR>
 
