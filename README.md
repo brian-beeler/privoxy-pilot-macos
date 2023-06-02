@@ -43,7 +43,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 4. Execute the following command to see if Privoxy is running: 
 
-    ps xa | grep /usr/local/opt/privoxy/sbin/privoxy
+    `ps xa | grep /usr/local/opt/privoxy/sbin/privoxy`
 
     You should see "privoxy started" which confirms it is running. If you see "privoxy error" either it did not start or possibly something went wrong during installation.
 
