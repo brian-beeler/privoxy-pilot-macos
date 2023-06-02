@@ -31,7 +31,9 @@ filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
 #      ft():  filter template: a template for creating new, custom filters lists
 #      lr():         log read: displays log files with ANSI colors
 #      lw():        log write: write log entries
+#      pp():  privoxy process: start, restart or stop the privoxy process
 #  status():   current status: displays privoxy status
+
 
 # download and create blp filter list
 function blpfl() {
@@ -138,7 +140,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   cat $config_bak_file >> $config_tmp_file
   mv $config_tmp_file $config_file
   lw "config $3 active"
-  brew services restart privoxy
+  pp restart
   lw "restart"
 fi 
 }
@@ -287,6 +289,50 @@ function lw() {
 }
 # end lw()
 
+# privoxy process
+function pp(){
+  local ps_search=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy")
+  local ps_search=($ps_search)
+  local pos=0
+  local ps_n="/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config"
+
+  if [[ $1 == "start" ]]; then
+    output=$(eval "$ps_n") && echo "$output"
+    while [[ $pos -lt ${#ps_search[@]} ]]; do
+      if [[ "${ps_search[$pos]} ${ps_search[$(($pos + 1))]}" == $ps_n ]]; then
+        echo "Privoxy is up"
+        lw "start"
+        status
+        break
+      fi
+      ((pos++))
+    done
+    echo "Privoxy could not be started"
+    lw "error"
+    exit 1
+  elif [[ $1 == "restart" ]]; then
+    pkill -f "/usr/local/opt/privoxy/sbin/privoxy"
+    lw "stop"
+    output=$(eval "$ps_n") && echo "$output"
+    while [[ $pos -lt ${#ps_search[@]} ]]; do
+      if [[ "${ps_search[$pos]} ${ps_search[$(($pos + 1))]}" == $ps_n ]]; then
+        echo "Privoxy is up"
+        lw "restart"
+        status
+        break
+      fi
+      ((pos++))
+    done
+    echo "Privoxy could not be started"
+    lw "error"
+    exit 1
+  elif [[ $1 == "stop" ]]; then
+    pkill -f "/usr/local/opt/privoxy/sbin/privoxy"
+    lw "stop"
+    exit 0
+  fi
+}
+
 # display status
 function status() {
   local config_head=$(head -n 1 $config_file)
@@ -300,9 +346,8 @@ do
     break
   fi
 done < $config_mod_file
-output=$(brew services list | grep privoxy)
-if [[ $output == *"started"* ]]; then
-  pid=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy --no-daemon $config_file" | grep -v grep | awk '{print $1}')
+local pid=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy $config_file" | grep -v grep | awk '{print $1}')
+if [[ $pid =~ ^0*[1-9][0-9]{0,2}$ ]]; then
   up_since=$(ps -p $pid -o lstart= | awk '{print $1,$2,$3,$4}')
   up_time=$(ps -p $pid -o etime= )
   config_date=$(ls -lD "%a %b %d %H:%M:%S" $config_file | awk '{print $6,$7,$8,$9}')
@@ -324,8 +369,9 @@ fi
 }
 # status()
 
-
+# 
 # main (for lack of better words)
+# 
 
 # checking for log file exsistance
 if [ ! -f $log_file ]; then
@@ -404,37 +450,21 @@ if [ ! -f "$filters_dir/distractions" ]; then
   echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
 fi
 
-# start
-if [[ $1 == "start" ]]; then
-  brew services start privoxy
-  lw "start" 
-
-# stop
-elif [[ $1 == "stop" ]]; then
-  brew services stop privoxy
-  lw "stop"
- 
-# restart
-elif [[ $1 == "restart" ]]; then
-  brew services restart privoxy
-  lw "restart" 
-
+# start, stop or restart
+if [[ $1 == "start" || $1 == "stop" || $1 == "restart" ]]; then
+  pp $1
 # status
 elif [[ $1 == "-s" ]] || [[ $1 == "status" ]]; then
   status
-
 # config
 elif [ "$1" = "config" ]; then
   config $1 $2 $3
-
 # display log file
 elif [[ $1 == "log" ]]; then
   lr 0
-
 # filter template
 elif [[ $1 == "filter" ]]; then
   ft $2
-
 # 
 else
   echo "usage: ./ppilot.sh [start|stop|restart|status|config|filter|log]"

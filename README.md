@@ -37,31 +37,42 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
     `brew install privoxy`
 
-3. After installation start privoxy via brew:
+3. After installation start privoxy:
 
-    `brew start privoxy`
+    /usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config
 
 4. Execute the following command to see if Privoxy is running: 
 
-    `brew services`
+    ps xa | grep /usr/local/opt/privoxy/sbin/privoxy
 
     You should see "privoxy started" which confirms it is running. If you see "privoxy error" either it did not start or possibly something went wrong during installation.
 
-5. Before continuing setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in your proxy settings or Privoxy itself.
+5. Setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in either your proxy settings or Privoxy itself.
+
+6. Finally shut down Privoxy:
+
+    `pkill -f "/usr/local/opt/privoxy/sbin/privoxy"`
 
 <BR>
 
 ## **Configure Privoxy and install Privoxy Pilot**
 
-Your choices are to either allow Privoxy to be accessible to clients on your local network or only by the Mac on which it is installed. It is recommended that Privoxy be accessible to clients on your local network **but only if you have a static IP address.** By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
-
-If you're unsure if your IP address is static then follow the instructions in "Configure Privoxy Pilot for single host use only."
+Your choices are to either allow Privoxy to be accessible to clients on your local network or only by the Mac on which it is installed.
+If you're unsure if your IP address is static then follow the instructions in "Configure Privoxy Pilot for single host use only" below "Configure Privoxy to be accessed by other local network clients and install Privoxy Pilot."
 
 ### **Configure Privoxy to be accessed by other local network clients and install Privoxy Pilot**
 
+ It is recommended that Privoxy be accessible to clients on your local network **but only if you have a static IP address.** By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
+
+#### **Automated installation**
+
+ `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
+
+#### **Manual installation**
+
 1. Download the Privoxy script: 
    
-    `curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"`
+   `curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"`
 
 2. Set Privoxy Pilot to execute by: 
    
@@ -81,11 +92,6 @@ If you're unsure if your IP address is static then follow the instructions in "C
 
     `cp /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.bak`
 
-    Or you can run the above commands from a single line:
-
-    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
-
-
     "**config.original**" is your Privoxy config file as installed
 
     "**config**" is your Privoxy config file as installed with the addition of "listen-address" to allow for local area network connections
@@ -96,7 +102,13 @@ If you're unsure if your IP address is static then follow the instructions in "C
 
 ### **Configure Privoxy for single host use only and install Privoxy Pilot**
 
-If you don't want to accept any connections from your local network or don't have a static IP address:
+If you don't want to accept any connections from your local network or don't have a static IP address this is the preferred installation and configuration.
+
+#### **Automated installation**
+
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh"`
+
+#### **Manual installation**
 
 1. Download the Privoxy script: 
    
@@ -116,10 +128,6 @@ If you don't want to accept any connections from your local network or don't hav
 
     `cp /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.bak`
 
-    Or you can run the above commands from a single line:
-
-    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh"`
-
     "**config.original**" is your Privoxy config file as installed
 
     "**config**" is your Privoxy config file as installed with the addition of some header space
@@ -129,7 +137,6 @@ If you don't want to accept any connections from your local network or don't hav
 <BR>
   
 ### **Configure Privoxy Pilot for initial start**
-
 
   1. Run Privoxy Pilot status: 
    
@@ -225,7 +232,28 @@ Delete config.bak and config. Running "ppilot.sh status" will recreate those fil
 
 You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/privoxy/config created" in the log section of status.
 
+<BR>
 
+## **FAQ**
 
+Q. Why did you create Privoxy Pilot?
+
+A. I, like many others, don't like being forced to just accept having our actions tracked by companies that refuse to give us the option to opt out of such tracking or advertising that also track us in much of the same way. 
+
+While browser extensions are easier to install and use, anyone that's used them knows there's limits on what they can block. Also websites are becoming better at detecting such browser extensions and are either finding ways to avoid their blocking techniques or just blocking a person from accessing their website until they disable their ad blocking extension [for the host's website]. Privoxy avoids this issue by blocking intrusive websites before they are ever seen by your web browser. Proxy servers simply are much more effective at blocking unwanted web traffic and doing it in a way that's transparent to the website that is foisting those unwanted websites upon you.
+
+But why not just Privoxy instead of also adding Privoxy Pilot? Privoxy is an amazing program and I am in the debt of all those that contributed to it. In the interest of stability many times some features must be omitted. For example if Privoxy included support for the Block List Project, like Privoxy Pilot does, and for whatever reason their filter lists went offline then it would effect their entire user base. I agree with their choices and support them, and feel there's room to additions to their application for those that find a need for those additions.
+
+Q. Why is Privoxy Pilot a bash script and not a compiled application?
+
+A. Because a bash script worked well and I wanted as many people as possible to see the inner workings of what was being done. The more people that can see what's happening the more trust they'll have that nothing nefarious is happening. It will also make it much easier for others to  make feature requests, suggest bug fixes and even take what I've written and "roll it" into their own project.
+
+Q. Why are you using "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" instead of "brew start privoxy" to start Privoxy?
+
+A. The original plan was to use "brew start privoxy" et al but in testing I ran into problems with that and related commands failing. Even after repeated complete reinstalls of both Privoxy and finally both Privoxy and Homebrew the problem persisted. I don't if it was an issue on my Macs or not but "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" has always worked.
+
+Q. Why not create multiple config files for different filter groups instead of using Privoxy Pilot to create and edit a new config file each time change are made?
+
+A. Then there would be multiple config files to deal with. By using Privoxy Pilot to copy the original config file and making the necessary changes there's only a single config file to modify.
 
 
