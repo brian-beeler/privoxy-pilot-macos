@@ -27,14 +27,14 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 <BR>
 
-## **Installing Homebrew**
+## **Install Homebrew**
 
 1. If not already installed, install the [Homebrew](https://en.wikipedia.org/wiki/Homebrew_(package_manager)) package manager:
    
    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
 
-## **Installing Privoxy**
+## **Install Privoxy**
 
 1. Install Privoxy via brew:
 
