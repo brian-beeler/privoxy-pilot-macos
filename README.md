@@ -71,15 +71,17 @@ When stable I plan on using what has been done here and building the privoxy-pil
 Your choices are to either allow Privoxy to be accessible to clients on your local network or only by the Mac on which it is installed.
 If you're unsure if your IP address is static then follow the instructions in "Configure Privoxy Pilot for single host use only" below "Configure Privoxy to be accessed by other local network clients and install Privoxy Pilot."
 
-### **Configure Privoxy to be accessed by other local network clients and install Privoxy Pilot**
+### **Install and configure Privoxy Pilot to be accessible by local network clients**
 
  It is recommended that Privoxy be accessible to clients on your local network **but only if you have a static IP address.** By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
 
-#### **Automated installation**
+#### **Automated installation of Privoxy Pilot**
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
 
-#### **Manual installation**
+#### **Manual installation of Privoxy Pilot**
+
+If you decide not to choose the automated installation method to install Privoxy Pilot then follow these instructions to perform the manual installation of Privoxy Pilot.
 
 1. Download the Privoxy script: 
    
@@ -111,15 +113,15 @@ If you're unsure if your IP address is static then follow the instructions in "C
     
 <BR>
 
-### **Configure Privoxy for single host use only and install Privoxy Pilot**
+### **Install and configure Privoxy Pilot for single host use only**
 
-If you don't want to accept any connections from your local network or don't have a static IP address this is the preferred installation and configuration.
+If you don't want to accept any connections from clients on your local network or don't have a static IP address this is the preferred installation and configuration.
 
-#### **Automated installation**
+#### **Automated installation of Privoxy Pilot**
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh"`
 
-#### **Manual installation**
+#### **Manual installation of Privoxy Pilot**
 
 1. Download the Privoxy script: 
    
@@ -266,5 +268,7 @@ A. The original plan was to use "brew start privoxy" et al but in testing I ran 
 Q. Why not create multiple config files for different filter groups instead of using Privoxy Pilot to create and edit a new config file each time change are made?
 
 A. Then there would be multiple config files to deal with. By using Privoxy Pilot to copy the original config file and making the necessary changes there's only a single config file to modify.
+
+
 
 
