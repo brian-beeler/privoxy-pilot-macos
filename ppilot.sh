@@ -76,9 +76,7 @@ if [[ "$2" = "list" ]]; then
       echo "$(ct "$line_tag" "b"): $(ct "$joined_elements" "g")"
     fi
   done < $config_mod_file
-
 fi
-
 # if ./privoxy.sh config set <filter group> is called
 if [ "$2" = "set" ] && [ -n "$3" ]; then
   local filter_list=()
@@ -89,8 +87,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   for item in $dir_list; do
     filters_dir_file_names+=("$item")
   done
-  #echo "filters_dir_file_names: ${filters_dir_file_names[@]}"
-
+  # echo "filters_dir_file_names: ${filters_dir_file_names[@]}"
   # reads config.mod and saves filters to $filter_list
   while IFS= read -r line; do
     if [[ $line == \#* ]]; then
@@ -101,7 +98,6 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
       filter_list+=("$value")
     fi
   done < $config_mod_file
-
   #cleans filter_list of \r
   filter_list=$(echo "$filter_list" | tr -d '\r')
   # write to a clean config
@@ -130,7 +126,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   lw "restart"
 fi 
 }
-# end blpfl()
+# end config()
 
 
 # function ct(): color text with ANSI colors
@@ -275,49 +271,6 @@ function lw() {
 }
 # end lw()
 
-# function pp(): privoxy process. starts, restarts and ends the privoxy process
-function pp(){
-  ps_search=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy")
-  local ps_search=($ps_search)
-  local pos=0
-
-  if [[ $1 == "start" ]]; then
-    output=$(eval "$ps_n") && echo "$output"
-    while [[ $pos -lt ${#ps_search[@]} ]]; do
-      if [[ "${ps_search[$pos]} ${ps_search[$(($pos + 1))]}" == $ps_n ]]; then
-        echo "Privoxy is up"
-        lw "start"
-        status
-        break
-      fi
-      ((pos++))
-    done
-    echo "Privoxy could not be started"
-    lw "error"
-    exit 1
-  elif [[ $1 == "restart" ]]; then
-    pkill -f "/usr/local/opt/privoxy/sbin/privoxy"
-    lw "stop"
-    output=$(eval "$ps_n") && echo "$output"
-    while [[ $pos -lt ${#ps_search[@]} ]]; do
-      if [[ "${ps_search[$pos]} ${ps_search[$(($pos + 1))]}" == $ps_n ]]; then
-        echo "Privoxy is up"
-        lw "restart"
-        status
-        exit 0
-      fi
-      ((pos++))
-    done
-    echo "Privoxy could not be started"
-    lw "error"
-    exit 1
-  elif [[ $1 == "stop" ]]; then
-    pkill -f "/usr/local/opt/privoxy/sbin/privoxy"
-    lw "stop"
-    exit 0
-  fi
-}
-
 # function status(): display privoxy status including PID, uptime,
 function status() {
   local config_head=$(head -n 1 $config_file)
@@ -353,9 +306,32 @@ fi
 }
 # status()
 
+#bs(): brew services for privoxy
+function bs() {
+  brew_services=$(brew services info privoxy)
+  if [[ ($1 == "start" || $1 == "restart") && $brew_services == *"Running: true"* ]]; then
+    brew services info privoxy
+    exit 1
+  fi
+  if [[ ($1 == "start" || $1 == "restart") && $brew_services == *"Running: false"* ]]; then
+    brew services start privoxy
+    exit 1
+  fi
+  if [[ $1 == "stop" && $brew_services == *"Running: true"* ]]; then
+    brew services stop privoxy
+    exit 1
+  fi
+  if [[ ($1 == "stop" && $brew_services == *"Running: true"*) || $brew_services == *"privoxy error"* ]]; then
+    echo "brew services stop privoxy"
+    brew services stop privoxy
+    exit 1
+  fi
+}
+
 #
 # end of functions
 #
+
 
 # 
 # main (for lack of better words)
@@ -373,10 +349,10 @@ config_mod_file="/usr/local/etc/privoxy/config.mod"
 log_file="/var/log/privoxy.log"
 filters_dir="/usr/local/etc/privoxy/filters"
 filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
-pid=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy $config_file" | grep -v grep | awk '{print $1}')
-ps_n="/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config"
+privoxy_bin="/usr/local/opt/privoxy/sbin/privoxy"
+ps_n="/usr/local/opt/privoxy/sbin/privoxy $config_file"
+ps_nnd="/usr/local/opt/privoxy/sbin/privoxy --no-daemon $config_file"
 ps_search=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy")
-
 
 # checking for log file exsistance
 if [ ! -f $log_file ]; then
@@ -453,16 +429,10 @@ if [ ! -f "$filters_dir/distractions" ]; then
   echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
 fi
 
-# Initial start if not already running
-if [ -z "$pid" ]; then
-  pp start
-fi
-
 # start, stop or restart
 if [[ $1 == "start" || $1 == "stop" || $1 == "restart" ]]; then
-  pp $1
-# status
-elif [[ $1 == "-s" ]] || [[ $1 == "status" ]]; then
+  bs $1
+elif [[ $1 == "status" ]]; then
   status
 # config
 elif [ "$1" = "config" ]; then

@@ -48,21 +48,23 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 2. After installation start privoxy:
 
-    `/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config`
+    `brew services start privoxy`
 
-3. Execute the following command to see if Privoxy is running: 
+    If you see "Successfully started privoxy" then Privoxy was successfully installed.
 
-    `ps xa | grep /usr/local/opt/privoxy/sbin/privoxy`
+3. If you don't see "Successfully started privoxy" the execute the following command: 
 
-    You should see a process for "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" which confirms privoxy is running. If you do not see that process and only see "grep /usr/local/opt/privoxy/sbin/privoxy" privoxy did not start or possibly something went wrong during installation.
+    `brew services start privoxy`
 
-4. Setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in either your proxy settings or Privoxy itself.
+    If you see "Running: ✔" then Privoxy is running. If you see "Running: ✘" then something went wrong with the Homebrew installation. To get help refer to the Homebrew [documentation](https://docs.brew.sh/) and their [community group](https://github.com/orgs/Homebrew/discussions).
+
+4. If you saw "Successfully started privoxy" setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in either your proxy settings or Privoxy itself.
 
 5. Finally shut down Privoxy:
 
-    `pkill -f "/usr/local/opt/privoxy/sbin/privoxy" | grep /usr/local/opt/privoxy/sbin/privoxy`
+    `brew services stop privoxy`
 
-    You will see that the process "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" is gone confirming it has been killed.
+    You should see "==> Successfully stopped privoxy" confirming that Privoxy has been stopped.
 
 <BR>
 
@@ -185,6 +187,34 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
 ## **Questions**
 
+**Q. Privoxy Pilot doesn't seem to be working. What can I do?**
+
+   1. Restore the original config file that was installed with Privoxy:
+    
+        `cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config`
+
+   2. Start Privoxy from brew:
+
+        `brew services start privoxy`
+
+   3. If you see "==> Successfully started privoxy" then it's possible that there was a problem in the previous config file.
+
+   4. On the Mac that is hosting Privoxy try going to "ads.com". You should see the Privoxy block page. This means Privoxy is working.
+   
+   5. If you want to share your Privoxy connection then run:
+   
+    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-reset.sh)"`
+
+    Or for single host use only:
+
+    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-reset.sh)"`
+
+   6. Stop Privoxy via brew and start with Privoxy Pilot:
+
+    `brew services stop privoxy && /usr/local/etc/privoxy/ppilot.sh`
+
+   7. That should fix the problem.
+
 **Q. I did the "Install and configure Privoxy Pilot to be accessible by local network clients" but only the Mac hosting Privoxy can connect to the proxy server and no one from the local network can connect to the proxy server [hosted on the Mac].**
 
 A. The install script detects your host's IP address and adds it to config but on the rare occasion that a host is using both their wireless and ethernet connections human intervention is required. Near the top of "/usr/local/etc/privoxy/config" you will see "listen-address" an IP address followed by ":8118" i.e.: "listen-address 192.168.1.2". Change the IP address to the IP of the connection in which client's can connect to your host.
@@ -212,10 +242,6 @@ But why not just Privoxy instead of also adding Privoxy Pilot? Privoxy is an ama
 **Q. Why is Privoxy Pilot a bash script and not a compiled application?**
 
 A. Because a bash script worked well and I wanted as many people as possible to see the inner workings of what was being done. The more people that can see what's happening the more trust they'll have that nothing nefarious is happening. It will also make it much easier for others to  make feature requests, suggest bug fixes and even take what I've written and "roll it" into their own project.
-
-**Q. Why are you using "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" instead of "brew start privoxy" to start Privoxy?**
-
-A. The original plan was to use "brew start privoxy" et al but in testing I ran into problems with that and related commands failing. Even after repeated complete reinstalls of both Privoxy and finally both Privoxy and Homebrew the problem persisted. I don't if it was an issue on my Macs or not but "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" has always worked.
 
 **Q. Why not create multiple config files for different filter groups instead of using Privoxy Pilot to create and edit a new config file each time change are made?**
 
