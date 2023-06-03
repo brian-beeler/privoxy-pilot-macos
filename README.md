@@ -27,29 +27,32 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 <BR>
 
-## **Installing Privoxy**
+## **Installing Homebrew**
 
-1. Install the [Homebrew](https://en.wikipedia.org/wiki/Homebrew_(package_manager)) package manager if not already installed:
+1. If not already installed, install the [Homebrew](https://en.wikipedia.org/wiki/Homebrew_(package_manager)) package manager:
    
    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
-2. Install Privoxy via brew:
+
+## **Installing Privoxy**
+
+1. Install Privoxy via brew:
 
     `brew install privoxy`
 
-3. After installation start privoxy:
+2. After installation start privoxy:
 
     `/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config`
 
-4. Execute the following command to see if Privoxy is running: 
+3. Execute the following command to see if Privoxy is running: 
 
     `ps xa | grep /usr/local/opt/privoxy/sbin/privoxy`
 
     You should see a process for "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" which confirms privoxy is running. If you do not see that process and only see "grep /usr/local/opt/privoxy/sbin/privoxy" privoxy did not start or possibly something went wrong during installation.
 
-5. Setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in either your proxy settings or Privoxy itself.
+4. Setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in either your proxy settings or Privoxy itself.
 
-6. Finally shut down Privoxy:
+5. Finally shut down Privoxy:
 
     `pkill -f "/usr/local/opt/privoxy/sbin/privoxy"`
 
