@@ -106,7 +106,7 @@ If you don't want to accept any connections from your local network or don't hav
 
 #### **Automated installation**
 
-2. `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh"`
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh"`
 
 #### **Manual installation**
 
