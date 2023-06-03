@@ -39,7 +39,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 3. After installation start privoxy:
 
-    /usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config
+    `/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config`
 
 4. Execute the following command to see if Privoxy is running: 
 
