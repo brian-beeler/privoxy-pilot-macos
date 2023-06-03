@@ -45,7 +45,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
     `ps xa | grep /usr/local/opt/privoxy/sbin/privoxy`
 
-    You should see "privoxy started" which confirms it is running. If you see "privoxy error" either it did not start or possibly something went wrong during installation.
+    You should see a process for "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" which confirms privoxy is running. If you do not see that process and only see "grep /usr/local/opt/privoxy/sbin/privoxy" privoxy did not start or possibly something went wrong during installation.
 
 5. Setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in either your proxy settings or Privoxy itself.
 
