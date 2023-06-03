@@ -123,6 +123,8 @@ If you don't want to accept any connections from clients on your local network o
 
 #### **Manual installation of Privoxy Pilot**
 
+If you decide not to choose the automated installation method to install Privoxy Pilot then follow these instructions to perform the manual installation of Privoxy Pilot.
+
 1. Download the Privoxy script: 
    
     `curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"`
