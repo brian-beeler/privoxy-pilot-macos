@@ -10,19 +10,6 @@
 # This project is still in its very beginnings and only made public for developement purposes. 
 # Do not use anything here until this notice is remove. If you do it will break things.
 
-# date and date sensitive values
-date_epoch=$(date +%s)
-date_stamp_long=$(date -r "$date_epoch" +"%a %b %d %Y %H:%M:%S %Z")
-date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
-config_original_file="/usr/local/etc/privoxy/config.original"
-config_bak_file="/usr/local/etc/privoxy/config.bak"
-config_tmp_file="/usr/local/etc/privoxy/config.tmp"
-config_file="/usr/local/etc/privoxy/config"
-config_mod_file="/usr/local/etc/privoxy/config.mod"
-log_file="/var/log/privoxy.log"
-filters_dir="/usr/local/etc/privoxy/filters"
-filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
-
 # functions:
 #   blpfl(): blp filter lists: download and edit blp filter lists
 #  config():      config list: list and choose .config list
@@ -34,8 +21,7 @@ filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
 #      pp():  privoxy process: start, restart or stop the privoxy process
 #  status():   current status: displays privoxy status
 
-
-# download and create blp filter list
+# function blpfl(): download and create blp filter list
 function blpfl() {
   local filter_file_name="$filters_blp_dir/$1"
   # file age or if file is missing set Unix epoch date at 0 (1970-01-01 00:00:00)
@@ -59,7 +45,7 @@ function blpfl() {
 }
 # end blpfl()
 
-# config
+# function config(): manipulates config file
 # TODO: error checking on privoxy.sh config set filter_group_no_exist
 #       right now on error no block lists are added
 function config() {
@@ -147,7 +133,7 @@ fi
 # end blpfl()
 
 
-# color text
+# function ct(): color text with ANSI colors
 function ct() {
     # $1=input text, $2=color
     if [[ $2 == "r" ]]; then
@@ -170,7 +156,7 @@ function ct() {
 }
 # end ct()
 
-# date difference
+# function dd(): age of file or date difference between now and date file was created
 function dd() {
     local file="$1"
     local file_date=$(date -r "$file" +%s)
@@ -193,7 +179,7 @@ function dd() {
 }
 # end dd()
 
-# 
+# function ft(): filter file template
 function ft() {
   # $1 is filter/file name
   # copies listing of file names in $filters_dir to filters_dir_file_names
@@ -233,7 +219,7 @@ function ft() {
 }
 # end ft()
 
-# log read. displays log files in ANSI colors
+# function lr(): log read. displays log files in ANSI colors
 function lr() {
   # $1: "0" = no header, "1" = header
   # 
@@ -282,14 +268,14 @@ function lr() {
 }
 # end lr()
 
-# log write. writes a log entry
+# function lw(): log write. writes a log entry
 function lw() {
   # $1: text
   echo "$date_stamp_long     privoxy $1"  >> $log_file
 }
 # end lw()
 
-# privoxy process
+# function pp(): privoxy process. starts, restarts and ends the privoxy process
 function pp(){
   local ps_search=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy")
   local ps_search=($ps_search)
@@ -319,7 +305,7 @@ function pp(){
         echo "Privoxy is up"
         lw "restart"
         status
-        break
+        exit 0
       fi
       ((pos++))
     done
@@ -333,7 +319,7 @@ function pp(){
   fi
 }
 
-# display status
+# function status(): display privoxy status including PID, uptime,
 function status() {
   local config_head=$(head -n 1 $config_file)
   local filter_group="${config_head:35:$((${#config_head} - 6 - 36))}"
@@ -369,9 +355,27 @@ fi
 }
 # status()
 
+#
+# end of functions
+#
+
 # 
 # main (for lack of better words)
 # 
+
+# date and date sensitive values
+date_epoch=$(date +%s)
+date_stamp_long=$(date -r "$date_epoch" +"%a %b %d %Y %H:%M:%S %Z")
+date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
+config_original_file="/usr/local/etc/privoxy/config.original"
+config_bak_file="/usr/local/etc/privoxy/config.bak"
+config_tmp_file="/usr/local/etc/privoxy/config.tmp"
+config_file="/usr/local/etc/privoxy/config"
+config_mod_file="/usr/local/etc/privoxy/config.mod"
+log_file="/var/log/privoxy.log"
+filters_dir="/usr/local/etc/privoxy/filters"
+filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
+
 
 # checking for log file exsistance
 if [ ! -f $log_file ]; then
