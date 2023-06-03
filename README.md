@@ -25,7 +25,7 @@ This project is still in its beginnings. If you have a question please ask. If y
 - ability to easily create custom filter lists
 - ability to easily create filter groups that contain multiple filter lists
 - ability to easily switch between different filter groups from a single command line
-- Uses Homwbrew to make Privoxy installation very easy
+- Uses Homebrew to make Privoxy installation very easy
 - incorporates block lists from the [Block List Project](https://github.com/blocklistproject/Lists)
 
 When stable I plan on using what has been done here and building the privoxy-pilot-ChromeOS project.
