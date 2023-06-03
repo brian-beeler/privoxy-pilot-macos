@@ -33,6 +33,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
    
    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
+<BR>
 
 ## **Install Privoxy**
 
