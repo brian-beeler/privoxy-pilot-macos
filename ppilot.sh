@@ -277,10 +277,9 @@ function lw() {
 
 # function pp(): privoxy process. starts, restarts and ends the privoxy process
 function pp(){
-  local ps_search=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy")
+  ps_search=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy")
   local ps_search=($ps_search)
   local pos=0
-  local ps_n="/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config"
 
   if [[ $1 == "start" ]]; then
     output=$(eval "$ps_n") && echo "$output"
@@ -332,7 +331,6 @@ do
     break
   fi
 done < $config_mod_file
-local pid=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy $config_file" | grep -v grep | awk '{print $1}')
 if [[ $pid =~ ^0*[1-9][0-9]{0,2}$ ]]; then
   up_since=$(ps -p $pid -o lstart= | awk '{print $1,$2,$3,$4}')
   up_time=$(ps -p $pid -o etime= )
@@ -375,6 +373,9 @@ config_mod_file="/usr/local/etc/privoxy/config.mod"
 log_file="/var/log/privoxy.log"
 filters_dir="/usr/local/etc/privoxy/filters"
 filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
+pid=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy $config_file" | grep -v grep | awk '{print $1}')
+ps_n="/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config"
+ps_search=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy")
 
 
 # checking for log file exsistance
@@ -383,7 +384,6 @@ if [ ! -f $log_file ]; then
   chmod og+rw $log_file
   echo "$date_stamp_long      $log_file created" >> $log_file
 fi
-
 # checks for $filters_dir and $filters_blp_dir created. creates if not found
 if [ ! -d $filters_dir ]; then
   mkdir -p $filters_dir
@@ -391,7 +391,6 @@ if [ ! -d $filters_dir ]; then
   echo "$date_stamp_long     $filters_dir created"  >> $log_file
   echo "$date_stamp_long     $filters_blp_dir created"  >> $log_file
 fi
-
 # checks for $config_original_file, $config_bak_file and config_file. 
 # if all are missing something really, really wrong has happenned
 # Privoxy config version 3.0.34 used
@@ -452,6 +451,11 @@ if [ ! -f "$filters_dir/distractions" ]; then
   echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
   curl --no-progress-meter -o "$filters_dir/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
   echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
+fi
+
+# Initial start if not already running
+if [ -z "$pid" ]; then
+  pp start
 fi
 
 # start, stop or restart

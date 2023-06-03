@@ -5,7 +5,7 @@
 curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"
 chmod ug+x /usr/local/etc/privoxy/ppilot.sh
 if [[ -f "/usr/local/etc/privoxy/config" && ! -f "/usr/local/etc/privoxy/config.original" ]]; then
-  cp "//usr/local/etc/privoxy/config" "/usr/local/etc/privoxy/config.original"
+  cp "/usr/local/etc/privoxy/config" "/usr/local/etc/privoxy/config.original"
   gzip "/usr/local/etc/privoxy/config.original"
   mv "/usr/local/etc/privoxy/config" "/usr/local/etc/privoxy/config.original"  
 fi
