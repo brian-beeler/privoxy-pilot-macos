@@ -251,23 +251,29 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
 ## **FAQ**
 
-Q. Why did you create Privoxy Pilot?
+**Q. Why did you create Privoxy Pilot?**
 
 A. I, like many others, don't like being forced to just accept having our actions tracked by companies that refuse to give us the option to opt out of such tracking or advertising that also track us in much of the same way. 
 
 While browser extensions are easier to install and use, anyone that's used them knows there's limits on what they can block. Also websites are becoming better at detecting such browser extensions and are either finding ways to avoid their blocking techniques or just blocking a person from accessing their website until they disable their ad blocking extension [for the host's website]. Privoxy avoids this issue by blocking intrusive websites before they are ever seen by your web browser. Proxy servers simply are much more effective at blocking unwanted web traffic and doing it in a way that's transparent to the website that is foisting those unwanted websites upon you.
 
-But why not just Privoxy instead of also adding Privoxy Pilot? Privoxy is an amazing program and I am in the debt of all those that contributed to it. In the interest of stability many times some features must be omitted. For example if Privoxy included support for the Block List Project, like Privoxy Pilot does, and for whatever reason their filter lists went offline then it would effect their entire user base. I agree with their choices and support them, and feel there's room to additions to their application for those that find a need for those additions.
+It should be noted that Google Chrome's [manifest v3](https://developer.chrome.com/docs/extensions/mv3/intro/) extension standard will make it difficult for ad blockers to function as they currently do under the current manifest v2 standard which will make blocking ads in Chrome much more difficult. Manifest v3 was a needed revision for security reasons but it will also make life much more difficult for the developers of ad blocking extensions in Chrome. Unsurprising other major websites have been following Google's lead to block access to their websites if they detect you're using a ad blocking browser extension. For more on this issue I recommend reading "[Mozilla solves the Manifest V3 puzzle to save ad blockers from Chromapocalypse](https://adguard.com/en/blog/firefox-manifestv3-chrome-adblocking.html)"
 
-Q. Why is Privoxy Pilot a bash script and not a compiled application?
+"Chris Titus Tech" has a good [video](https://www.youtube.com/watch?v=oQL9dVsEXT0) explaining this issue of manifest v3 and how Google is also starting to block access to YouTube if you're using an ad blocking extension. He discusses [Pi-hole](https://github.com/pi-hole/pi-hole) that acts as a "[DNS sinkhole](https://en.wikipedia.org/wiki/DNS_sinkhole)" which is also a way to remove unwanted advertising and tracking websites from your web browser. Like Privoxy Pilot Pi-hole also uses Block List Project filters. 
+
+I prefer using a proxy server method instead of a DNS sinkhole because it is easier for a host administrator to bypass if required, easier for an administrator to shut down if required and more difficult for users to bypass if their local network administrator has required them to use a proxy server but I highly recommend checking out their project as it has benefits over using a proxy server.
+
+But why not just Privoxy instead of also adding Privoxy Pilot? Privoxy is an amazing program and I am in the debt of all those that contributed to it. In the interest of stability many times some features must be omitted. For example if Privoxy included support for the Block List Project, like Privoxy Pilot does, and for whatever reason their filter lists went offline then that would effect their entire user base. I agree with their choices and support them, and feel there's room to additions to their application for those that find a need for those additions.
+
+**Q. Why is Privoxy Pilot a bash script and not a compiled application?**
 
 A. Because a bash script worked well and I wanted as many people as possible to see the inner workings of what was being done. The more people that can see what's happening the more trust they'll have that nothing nefarious is happening. It will also make it much easier for others to  make feature requests, suggest bug fixes and even take what I've written and "roll it" into their own project.
 
-Q. Why are you using "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" instead of "brew start privoxy" to start Privoxy?
+**Q. Why are you using "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" instead of "brew start privoxy" to start Privoxy?**
 
 A. The original plan was to use "brew start privoxy" et al but in testing I ran into problems with that and related commands failing. Even after repeated complete reinstalls of both Privoxy and finally both Privoxy and Homebrew the problem persisted. I don't if it was an issue on my Macs or not but "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" has always worked.
 
-Q. Why not create multiple config files for different filter groups instead of using Privoxy Pilot to create and edit a new config file each time change are made?
+**Q. Why not create multiple config files for different filter groups instead of using Privoxy Pilot to create and edit a new config file each time change are made?**
 
 A. Then there would be multiple config files to deal with. By using Privoxy Pilot to copy the original config file and making the necessary changes there's only a single config file to modify.
 

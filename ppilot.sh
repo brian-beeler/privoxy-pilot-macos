@@ -422,7 +422,7 @@ if [[ -f "$config_file" ]] && [[ ! -f "$config_original_file" ]] && [[ ! -f "$co
   echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
   echo "$date_stamp_long     $config_bak_file created"  >> $log_file
 fi
-# checks for config and mo config.bak. creates config.bak 
+# checks for config and no config.bak. creates config.bak 
 if [[ -f "$config_file" ]] && [[ ! -f "$config_bak_file" ]]; then
   gzip -d $config_original_file
   cp $config_original_file $config_bak_file
