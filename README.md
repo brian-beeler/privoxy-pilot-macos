@@ -75,79 +75,13 @@ If you're unsure if your IP address is static then follow the instructions in "C
 
  It is recommended that Privoxy be accessible to clients on your local network **but only if you have a static IP address.** By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
 
-#### **Automated installation of Privoxy Pilot**
-
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
-
-#### **Manual installation of Privoxy Pilot**
-
-If you decide not to choose the automated installation method to install Privoxy Pilot then follow these instructions to perform the manual installation of Privoxy Pilot.
-
-1. Download the Privoxy script: 
-   
-   `curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"`
-
-2. Set Privoxy Pilot to execute by: 
-   
-   `chmod og+x /usr/local/etc/privoxy/ppilot.sh`
-
-3. Add some head room to config and allow Privoxy to accept connections with clients on your local network:
-
-    `mv /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.original`
-
-    `echo -e "\r\n\r\n# \r\n# \r\n# \r\n# # allow privoxy to make connections with the local network" >> /usr/local/etc/privoxy/config`
-
-    `echo -e "listen-address $(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')":8118 >> /usr/local/etc/privoxy/config`
-
-    `echo -e "# \r\n# \r\n# \r\n# \r\n" >> /usr/local/etc/privoxy/config`
-
-    `echo -e /usr/local/etc/privoxy/config.original >> /usr/local/etc/privoxy/config`
-
-    `cp /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.bak`
-
-    "**config.original**" is your Privoxy config file as installed
-
-    "**config**" is your Privoxy config file as installed with the addition of "listen-address" to allow for local area network connections
-    
-    "**config.bak**" is a backup of your modified config file
-    
-<BR>
 
 ### **Install and configure Privoxy Pilot for single host use only**
 
 If you don't want to accept any connections from clients on your local network or don't have a static IP address this is the preferred installation and configuration.
 
-#### **Automated installation of Privoxy Pilot**
-
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh"`
-
-#### **Manual installation of Privoxy Pilot**
-
-If you decide not to choose the automated installation method to install Privoxy Pilot then follow these instructions to perform the manual installation of Privoxy Pilot.
-
-1. Download the Privoxy script: 
-   
-    `curl -o "/usr/local/etc/privoxy/ppilot.sh" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"`
-
-2. Set Privoxy Pilot to execute by: 
-   
-    `chmod og+x /usr/local/etc/privoxy/ppilot.sh`
-
-3. Add some head room in config:
-
-    `mv /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.original`
-
-    `echo -e "\r\n\r\n# \r\n# \r\n# \r\n# \r\n" >> /usr/local/etc/privoxy/config`
-
-    `echo -e /usr/local/etc/privoxy/config.original >> /usr/local/etc/privoxy/config`
-
-    `cp /usr/local/etc/privoxy/config /usr/local/etc/privoxy/config.bak`
-
-    "**config.original**" is your Privoxy config file as installed
-
-    "**config**" is your Privoxy config file as installed with the addition of some header space
-
-    "**config.bak**" is a backup of your modified config file
     
 <BR>
   
@@ -207,7 +141,7 @@ display log
 
 1. View a list of existing local filter groups and lists: 
    
-   `/usr/local/etc/privoxy/ppilot.sh config list` 
+    `/usr/local/etc/privoxy/ppilot.sh config list` 
  
 2. Create a new filter list named "work" [or whatever you want to name it]:
 
@@ -220,8 +154,8 @@ display log
 ## **Create a new or edit an existing filter group**
 
    1. Edit the config.mod file and follow the instructions in the comments: 
-    
-        `nano /usr/local/etc/privoxy/config.mod`
+   
+    `nano /usr/local/etc/privoxy/config.mod`
 
 <BR>
 
@@ -231,21 +165,31 @@ While not common editing the original Privoxy config file is sometimes necessary
 
 Uncompress config.original:
 
-`gzip -d /usr/local/etc/privoxy/config.original.gz`
+    `gzip -d /usr/local/etc/privoxy/config.original.gz`
 
 Edit config.original. Be careful as this is your original or "root" Privoxy config file. I'd suggest that all edits go at the top as that will make finding those edits at a later date.
 
-`nano /usr/local/etc/privoxy/config.original`
+    `nano /usr/local/etc/privoxy/config.original`
 
 Compress config.original:
 
-`gzip /usr/local/etc/privoxy/config.original`
+    `gzip /usr/local/etc/privoxy/config.original`
 
 Delete config.bak and config. Running "ppilot.sh status" will recreate those files and display that action in the log section of status.
 
-`rm /usr/local/etc/privoxy/config.bak && rm /usr/local/etc/privoxy/config && /usr/local/etc/ppilot.sh status`
+    `rm /usr/local/etc/privoxy/config.bak && rm /usr/local/etc/privoxy/config && /usr/local/etc/ppilot.sh status`
 
 You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/privoxy/config created" in the log section of status.
+
+<BR>
+
+## **Questions**
+
+**Q. I did the "Install and configure Privoxy Pilot to be accessible by local network clients" but only the Mac hosting Privoxy can connect to the proxy server and no one from the local network can connect to the proxy server [hosted on the Mac].**
+
+A. The install script detects your host's IP address and adds it to config but on the rare occasion that a host is using both their wireless and ethernet connections human intervention is required. Near the top of "/usr/local/etc/privoxy/config" you will see "listen-address" an IP address followed by ":8118" i.e.: "listen-address 192.168.1.2". Change the IP address to the IP of the connection in which client's can connect to your host.
+
+The most common occurrence of this issue is when a Mac is being used a required of "forced" proxy server where local network clients connect to the Internet via the Mac's "share network" option and not directly to a dedicated router.
 
 <BR>
 
