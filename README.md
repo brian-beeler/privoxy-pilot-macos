@@ -15,13 +15,18 @@ Privoxy Pilot bash script and set of templates to better manage Privoxy on macOS
 
 This project is still in its beginnings. If you have a question please ask. If you are not comfortable working in the terminal than ask someone that is to help you.
 
-Privoxy is a wonderful project to which I'm in debt to its contributors. My project simply makes managing Privoxy's settings on macOS a bit easier. Features include:
+[Privoxy](https://www.privoxy.org) is a wonderful project to which I'm in debt to its contributors. My project simply makes managing Privoxy's settings on macOS a bit easier. Features include:
 
-- terminal based status panel with copious status details including past events
+- terminal based status panel with copious status details including:
+  - up time
+  - current filter group with their filters lists
+  - past events
 - detailed logging of events as transacted with Privoxy Pilot
-- ability to easily switch between different groups of filters from a single command line
-- built to work with Privoxy installations done with brew
-- incorporates block lists from the Block List Project.
+- ability to easily create custom filter lists
+- ability to easily create filter groups that contain multiple filter lists
+- ability to easily switch between different filter groups from a single command line
+- Uses Homwbrew to make Privoxy installation very easy
+- incorporates block lists from the [Block List Project](https://github.com/blocklistproject/Lists)
 
 When stable I plan on using what has been done here and building the privoxy-pilot-ChromeOS project.
 
