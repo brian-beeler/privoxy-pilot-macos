@@ -55,7 +55,9 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 5. Finally shut down Privoxy:
 
-    `pkill -f "/usr/local/opt/privoxy/sbin/privoxy"`
+    `pkill -f "/usr/local/opt/privoxy/sbin/privoxy" | grep /usr/local/opt/privoxy/sbin/privoxy`
+
+    You will see that the process "/usr/local/opt/privoxy/sbin/privoxy /usr/local/etc/privoxy/config" is gone confirming it has been killed.
 
 <BR>
 
