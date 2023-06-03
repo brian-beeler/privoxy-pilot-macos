@@ -66,7 +66,7 @@ If you're unsure if your IP address is static then follow the instructions in "C
 
 #### **Automated installation**
 
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
 
 #### **Manual installation**
 
