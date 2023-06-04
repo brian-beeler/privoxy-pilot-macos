@@ -199,7 +199,9 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
     `brew services start privoxy`
 
-3. If you see "==> Successfully started privoxy" then it's possible that there was a problem in the previous config file.
+3. If you see "==> Successfully started privoxy" then it's possible that there was a problem in the previous config file. 
+   
+   If you don't since Privoxy has been returned to its original installation state that's where the problem lies. The first place to check is the Privoxy [documentation](https://www.privoxy.org/user-manual/index.html). Also refer to the Homebrew [documentation](https://docs.brew.sh/) and their [community group](https://github.com/orgs/Homebrew/discussions). 
 
 4. On the Mac that is hosting Privoxy try going to "ads.com". You should see the Privoxy block page. This means Privoxy is working.
    
@@ -215,7 +217,7 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
     `brew services stop privoxy && /usr/local/etc/privoxy/ppilot.sh`
 
-7. That should fix the problem.
+7.  That should fix the problem.
 
 **Q. I did the "Install and configure Privoxy Pilot to be accessible by local network clients" but only the Mac hosting Privoxy can connect to the proxy server and no one from the local network can connect to the proxy server [hosted on the Mac].**
 
