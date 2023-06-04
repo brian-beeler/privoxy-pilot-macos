@@ -12,6 +12,7 @@
 
 # functions:
 #   blpfl(): blp filter lists: download and edit blp filter lists
+#      bs():    brew services: 
 #  config():      config list: list and choose .config list
 #      ct():       color text: colorizes text in ANSI RGB
 #      dd():  date difference: calcutates the amount of time since a file has been modified
@@ -45,10 +46,46 @@ function blpfl() {
 }
 # end blpfl()
 
+#bs(): brew services for privoxy
+function bs() {
+  local brew_services=$(brew services info privoxy)
+  if [[ $1 == "start" && $brew_services == *"Running: true"* ]]; then
+    brew services
+    exit 1
+  fi
+  if [[ $1 == "restart" && $brew_services == *"Running: true"* ]]; then
+    brew services restart privoxy
+    lw "restart"
+    exit 1
+  fi
+    if [[ $1 == "start" && $brew_services == *"Running: false"* ]]; then
+    brew services start privoxy
+    lw "start"
+    exit 1
+  fi
+  if [[ $1 == "restart" && $brew_services == *"Running: false"* ]]; then
+    brew services start provixy
+    lw "restart"
+    exit 1
+  fi
+  if [[ $1 == "stop" && $brew_services == *"Running: true"* ]]; then
+    brew services stop privoxy
+    lw "stop"
+    exit 1
+  fi
+  if [[ ($1 == "stop" && $brew_services == *"Running: true"*) || $brew_services == *"privoxy error"* ]]; then
+    brew services stop privoxy
+    lw "stop"
+    exit 1
+  fi
+}
+# end bs()
+
 # function config(): manipulates config file
 # TODO: error checking on privoxy.sh config set filter_group_no_exist
 #       right now on error no block lists are added
 function config() {
+  local blp_fl=("abuse" "ads" "crypto" "drugs" "everything" "facebook" "fraud" "gambling" "malware" "phishing" "piracy" "porn" "ransomware" "redirect" "scam" "tiktok" "torrent" "tracking")
 # checks for config.bak     and creates one if not found
 # options -c restore        restore config from config.bak. retores config to a vanilla state
 #         -c backup         backup config config.bak. use after editing config
@@ -58,7 +95,6 @@ function config() {
 # TODO: set = cp config.bak config, read config.mod, choose line, write:
 #   actionsfile $filters_dir/(name) to top of config
 # 
-local blp_fl=("abuse" "ads" "crypto" "drugs" "everything" "facebook" "fraud" "gambling" "malware" "phishing" "piracy" "porn" "ransomware" "redirect" "scam" "tiktok" "torrent" "tracking")
 # 
 # if ./privoxy.sh config list is called
 if [[ "$2" = "list" ]]; then
@@ -77,9 +113,6 @@ if [[ "$2" = "list" ]]; then
     fi
   done < $config_mod_file
 fi
-
-
-
 # if ./privoxy.sh config set <filter group> is called
 if [ "$2" = "set" ] && [ -n "$3" ]; then
   local filter_list=()
@@ -126,7 +159,6 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
 fi 
 }
 # end config()
-
 
 # function ct(): color text with ANSI colors
 function ct() {
@@ -272,76 +304,39 @@ function lw() {
 
 # function status(): display privoxy status including PID, uptime,
 function status() {
+  local bs=$(brew services info privoxy)
+  bs=($bs)
+  local bs_user=${bs[9]}
+  local bs_pid=${bs[11]}
   local filter_group=$(head -n 2 $config_file | tail -n 1)
   filter_group=($filter_group)
   filter_group="${filter_group[3]}"
   local filter_list=$(head -n 3 $config_file | tail -n 1)
   filter_list=($filter_list)
   filter_list="${filter_list[3]}"
-  local bs=$(brew services info privoxy)
-  bs=($bs)
-  local bs_user=${bs[9]}
-  local bs_pid=${bs[11]}
-if [[ $bs_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
-  local up_since=$(ps -p $bs_pid -o lstart= | awk '{print $1,$2,$3,$4}')
-  up_since=($up_since)
-  [[ ${#up_since[2]} -eq 1 ]] && up_since[2]="0${up_since[2]}"
-  up_since="${up_since[0]} ${up_since[1]} ${up_since[2]} ${up_since[3]}"
-  local up_time=$(ps -p $bs_pid -o etime= )
+  if [[ $bs_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
+    local up_since=$(ps -p $bs_pid -o lstart= | awk '{print $1,$2,$3,$4}')
+    up_since=($up_since)
+    [[ ${#up_since[2]} -eq 1 ]] && up_since[2]="0${up_since[2]}"
+    up_since="${up_since[0]} ${up_since[1]} ${up_since[2]} ${up_since[3]}"
+    local up_time=$(ps -p $bs_pid -o etime= )
+    local up="$(ct "$up_since" "y") ($(ct "$up_time" "y"))"
+  else
+    local up=""
+  fi
   config_date=$(ls -lD "%a %b %d %H:%M:%S" $config_file | awk '{print $6,$7,$8,$9}')
   echo -e "         pid: $(ct "$bs_pid" "y")"
   echo -e "        user: $(ct "$bs_user" "y")"
-  echo -e "          up: $(ct "$up_since" "y") ($(ct "$up_time" "y"))"
+  echo -e "          up: $up"
   echo -e "      config: $(ct "$config_date" "y") ($(ct "$(dd $config_file)" "y"))"
   echo -e "filter group: $(ct "$filter_group" "b")"
   echo -e "filter lists: $(ct "$filter_list" "b")"  
   echo "              -------------------"
   lr 1
-elif [[ $output == *"none"* ]]; then
-  #echo -e "OUTPUT: $output"
-  #echo -e "$(color_text "$output" "error" "red")"
-  #echo -e "$date_stamp     privoxy status $(ct "error" "r")" >> $log_file
-  lw "status error"
-else
-  echo -e "$(ct "$output" "r")"
-fi
+
 }
 # status()
 
-#bs(): brew services for privoxy
-function bs() {
-  local brew_services=$(brew services info privoxy)
-  if [[ $1 == "start" && $brew_services == *"Running: true"* ]]; then
-    brew services
-    lw "start"
-    exit 1
-  fi
-  if [[ $1 == "restart" && $brew_services == *"Running: true"* ]]; then
-    brew services restart privoxy
-    lw "restart"
-    exit 1
-  fi
-    if [[ $1 == "start" && $brew_services == *"Running: false"* ]]; then
-    brew services start
-    lw "start"
-    exit 1
-  fi
-  if [[ $1 == "restart" && $brew_services == *"Running: false"* ]]; then
-    brew services start
-    lw "restart"
-    exit 1
-  fi
-  if [[ $1 == "stop" && $brew_services == *"Running: true"* ]]; then
-    brew services stop privoxy
-    lw "stop"
-    exit 1
-  fi
-  if [[ ($1 == "stop" && $brew_services == *"Running: true"*) || $brew_services == *"privoxy error"* ]]; then
-    brew services stop privoxy
-    lw "stop"
-    exit 1
-  fi
-}
 
 #
 # end of functions
@@ -447,7 +442,7 @@ if [ ! -f "$filters_dir/distractions" ]; then
 fi
 
 # start, stop or restart
-if [[ $1 == "start" || $1 == "stop" || $1 == "restart" || $1 == "pid" ]]; then
+if [[ $1 == "start" || $1 == "stop" || $1 == "restart" ]]; then
   bs $1
 elif [[ $1 == "status" ]]; then
   status
