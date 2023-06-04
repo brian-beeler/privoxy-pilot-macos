@@ -56,7 +56,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
     `brew services start privoxy`
 
-    If you see "Running: ✔" then Privoxy is running. If you see "Running: <span style="color:red">✘</span>" then something went wrong with the Homebrew installation. To get help refer to the Homebrew [documentation](https://docs.brew.sh/) and their [community group](https://github.com/orgs/Homebrew/discussions).
+    If you see "Running: ✔" then Privoxy is running. If you see "Running: ✘" then something went wrong with the Homebrew installation. To get help refer to the Homebrew [documentation](https://docs.brew.sh/) and their [community group](https://github.com/orgs/Homebrew/discussions).
 
 4. If you saw "Successfully started privoxy" setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in either your proxy settings or Privoxy itself.
 
