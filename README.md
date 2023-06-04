@@ -89,17 +89,17 @@ If you don't want to accept any connections from clients on your local network o
   
 ### **Configure Privoxy Pilot for initial start**
 
-  1. Run Privoxy Pilot status: 
+1. Run Privoxy Pilot status: 
    
-        `/usr/local/etc/privoxy/ppilot.sh status`
+    `/usr/local/etc/privoxy/ppilot.sh status`
 
-        This will perform a series of checks for the configuration files required to run and display what actions took place in the "log" section of status
+    This will perform a series of checks for the configuration files required to run and display what actions took place in the "log" section of status
 
-   2. Run Privoxy Pilot to have the "default" filter list group activated:  
+2. Run Privoxy Pilot to have the "default" filter list group activated:  
    
-        `/usr/local/etc/privoxy/ppilot.sh config set default && /usr/local/etc/privoxy/ppilot.sh status`
+    `/usr/local/etc/privoxy/ppilot.sh config set default && /usr/local/etc/privoxy/ppilot.sh status`
 
-        This will configure Privoxy to use the default filter set which consists of lists from Block List Project and a local file "/usr/local/etc/privoxy/filters/mylist" where you can add websites you want blocked. Locally created and managed filter lists are found in "/usr/local/etc/privoxy/filters". Block List Project filters are stored in "/usr/local/etc/privoxy/filters/blp" and should not be edited as they are automatically updated every week.
+    This will configure Privoxy to use the default filter set which consists of lists from Block List Project and a local file "/usr/local/etc/privoxy/filters/mylist" where you can add websites you want blocked. Locally created and managed filter lists are found in "/usr/local/etc/privoxy/filters". Block List Project filters are stored in "/usr/local/etc/privoxy/filters/blp" and should not be edited as they are automatically updated every week.
 
 <BR>
 
@@ -141,9 +141,9 @@ display log
 
 ## **Creating a new filter list**
 
-1. View a list of existing local filter groups and lists: 
+1. View a list of existing local filter groups and lists:  
    
-    `/usr/local/etc/privoxy/ppilot.sh config list` 
+    `/usr/local/etc/privoxy/ppilot.sh config list`
  
 2. Create a new filter list named "work" [or whatever you want to name it]:
 
@@ -155,9 +155,11 @@ display log
 
 ## **Create a new or edit an existing filter group**
 
-   1. Edit the config.mod file and follow the instructions in the comments: 
-   
+1. Edit the config.mod file and follow the instructions in the comments: 
+    
     `nano /usr/local/etc/privoxy/config.mod`
+
+
 
 <BR>
 
@@ -165,19 +167,19 @@ display log
 
 While not common editing the original Privoxy config file is sometimes necessary. It's important to edit the config file that was created on Privoxy's installation. The original config file untouched by Privoxy Pilot is stored in "/usr/local/etc/privoxy/config.original.gz". To edit:
 
-Uncompress config.original:
+1. Uncompress config.original:
 
     `gzip -d /usr/local/etc/privoxy/config.original.gz`
 
-Edit config.original. Be careful as this is your original or "root" Privoxy config file. I'd suggest that all edits go at the top as that will make finding those edits at a later date.
+2. Edit config.original. Be careful as this is your original or "root" Privoxy config file. I'd suggest that all edits go at the top as that will make finding those edits at a later date.
 
     `nano /usr/local/etc/privoxy/config.original`
 
-Compress config.original:
+3. Compress config.original:
 
     `gzip /usr/local/etc/privoxy/config.original`
 
-Delete config.bak and config. Running "ppilot.sh status" will recreate those files and display that action in the log section of status.
+4. Delete config.bak and config. Running "ppilot.sh status" will recreate those files and display that action in the log section of status.
 
     `rm /usr/local/etc/privoxy/config.bak && rm /usr/local/etc/privoxy/config && /usr/local/etc/ppilot.sh status`
 
@@ -189,19 +191,19 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
 **Q. Privoxy Pilot doesn't seem to be working. What can I do?**
 
-   1. Restore the original config file that was installed with Privoxy:
+1. Restore the original config file that was installed with Privoxy:
     
-        `cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config`
+    `cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config`
 
-   2. Start Privoxy from brew:
+2. Start Privoxy from brew:
 
-        `brew services start privoxy`
+    `brew services start privoxy`
 
-   3. If you see "==> Successfully started privoxy" then it's possible that there was a problem in the previous config file.
+3. If you see "==> Successfully started privoxy" then it's possible that there was a problem in the previous config file.
 
-   4. On the Mac that is hosting Privoxy try going to "ads.com". You should see the Privoxy block page. This means Privoxy is working.
+4. On the Mac that is hosting Privoxy try going to "ads.com". You should see the Privoxy block page. This means Privoxy is working.
    
-   5. If you want to share your Privoxy connection then run:
+5. If you want to share your Privoxy connection then run:
    
     `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-reset.sh)"`
 
@@ -209,11 +211,11 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
     `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-reset.sh)"`
 
-   6. Stop Privoxy via brew and start with Privoxy Pilot:
+6. Stop Privoxy via brew and start with Privoxy Pilot:
 
     `brew services stop privoxy && /usr/local/etc/privoxy/ppilot.sh`
 
-   7. That should fix the problem.
+7. That should fix the problem.
 
 **Q. I did the "Install and configure Privoxy Pilot to be accessible by local network clients" but only the Mac hosting Privoxy can connect to the proxy server and no one from the local network can connect to the proxy server [hosted on the Mac].**
 
@@ -246,6 +248,11 @@ A. Because a bash script worked well and I wanted as many people as possible to 
 **Q. Why not create multiple config files for different filter groups instead of using Privoxy Pilot to create and edit a new config file each time change are made?**
 
 A. Then there would be multiple config files to deal with. By using Privoxy Pilot to copy the original config file and making the necessary changes there's only a single config file to modify.
+
+**Q. Do you take donations?**
+
+A. No but I ask that you consider donating to the [Privoxy(https://www.privoxy.org/faq/general.html#DONATE)] project as none of this would've been possible without their hard work and dedication to building an invaluable application. 
+
 
 
 
