@@ -287,7 +287,6 @@ if [[ $bs_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
   up_since=($up_since)
   [[ ${#up_since[2]} -eq 1 ]] && up_since[2]="0${up_since[2]}"
   up_since="${up_since[0]} ${up_since[1]} ${up_since[2]} ${up_since[3]}"
-  echo "status() up_since: $up_since"
   local up_time=$(ps -p $bs_pid -o etime= )
   config_date=$(ls -lD "%a %b %d %H:%M:%S" $config_file | awk '{print $6,$7,$8,$9}')
   echo -e "         pid: $(ct "$bs_pid" "y")"
