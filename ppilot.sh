@@ -77,17 +77,19 @@ if [[ "$2" = "list" ]]; then
     fi
   done < $config_mod_file
 fi
+
+
+
 # if ./privoxy.sh config set <filter group> is called
 if [ "$2" = "set" ] && [ -n "$3" ]; then
   local filter_list=()
-
   # copies listing of file names in $filters_dir to filters_dir_file_names
   local declare filters_dir_file_names
   dir_list=$(ls -p $filters_dir | grep -v /)  
   for item in $dir_list; do
     filters_dir_file_names+=("$item")
   done
-  # echo "filters_dir_file_names: ${filters_dir_file_names[@]}"
+  #echo "filters_dir_file_names: ${filters_dir_file_names[@]}"
   # reads config.mod and saves filters to $filter_list
   while IFS= read -r line; do
     if [[ $line == \#* ]]; then
@@ -101,8 +103,9 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   #cleans filter_list of \r
   filter_list=$(echo "$filter_list" | tr -d '\r')
   # write to a clean config
-  echo "# $date_stamp_long     $3 active" >> $config_tmp_file
-  echo "# " >>  $config_tmp_file
+  echo "# $date_stamp_long" >> $config_tmp_file
+  echo "# filter group: $3" >> $config_tmp_file
+  echo "# filter list: $filter_list" >> $config_tmp_file
   IFS=',' read -ra filters <<< "$filter_list"
   for filter in "${filters[@]}"; do
     # if filter is in blp filter list 
@@ -114,15 +117,11 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
     if [[ " ${filters_dir_file_names[@]} " =~ " $filter " ]]; then
       echo "actionsfile $filters_dir/$filter" >> $config_tmp_file
     fi
-
-  done
-  echo " " >> $config_tmp_file
-  echo " " >> $config_tmp_file
-  echo " " >> $config_tmp_file
+  done  
   cat $config_bak_file >> $config_tmp_file
   mv $config_tmp_file $config_file
   lw "config $3 active"
-  pp restart
+  bs restart
   lw "restart"
 fi 
 }
@@ -273,22 +272,26 @@ function lw() {
 
 # function status(): display privoxy status including PID, uptime,
 function status() {
-  local config_head=$(head -n 1 $config_file)
-  local filter_group="${config_head:35:$((${#config_head} - 6 - 36))}"
-# Read the file line by line
-while IFS= read -r line
-do
-  # Check if the line starts with the filter set
-  if [[ "$line" == "$filter_group"* ]]; then
-    local filter_list="${line#"$filter_group="}"
-    break
-  fi
-done < $config_mod_file
-if [[ $pid =~ ^0*[1-9][0-9]{0,2}$ ]]; then
-  up_since=$(ps -p $pid -o lstart= | awk '{print $1,$2,$3,$4}')
-  up_time=$(ps -p $pid -o etime= )
+  local filter_group=$(head -n 2 $config_file | tail -n 1)
+  filter_group=($filter_group)
+  filter_group="${filter_group[3]}"
+  local filter_list=$(head -n 3 $config_file | tail -n 1)
+  filter_list=($filter_list)
+  filter_list="${filter_list[3]}"
+  local bs=$(brew services info privoxy)
+  bs=($bs)
+  local bs_user=${bs[9]}
+  local bs_pid=${bs[11]}
+if [[ $bs_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
+  local up_since=$(ps -p $bs_pid -o lstart= | awk '{print $1,$2,$3,$4}')
+  up_since=($up_since)
+  [[ ${#up_since[2]} -eq 1 ]] && up_since[2]="0${up_since[2]}"
+  up_since="${up_since[0]} ${up_since[1]} ${up_since[2]} ${up_since[3]}"
+  echo "status() up_since: $up_since"
+  local up_time=$(ps -p $bs_pid -o etime= )
   config_date=$(ls -lD "%a %b %d %H:%M:%S" $config_file | awk '{print $6,$7,$8,$9}')
-  echo -e "         pid: $(ct "$pid" "y")"
+  echo -e "         pid: $(ct "$bs_pid" "y")"
+  echo -e "        user: $(ct "$bs_user" "y")"
   echo -e "          up: $(ct "$up_since" "y") ($(ct "$up_time" "y"))"
   echo -e "      config: $(ct "$config_date" "y") ($(ct "$(dd $config_file)" "y"))"
   echo -e "filter group: $(ct "$filter_group" "b")"
@@ -308,22 +311,35 @@ fi
 
 #bs(): brew services for privoxy
 function bs() {
-  brew_services=$(brew services info privoxy)
-  if [[ ($1 == "start" || $1 == "restart") && $brew_services == *"Running: true"* ]]; then
-    brew services info privoxy
+  local brew_services=$(brew services info privoxy)
+  if [[ $1 == "start" && $brew_services == *"Running: true"* ]]; then
+    brew services
+    lw "start"
     exit 1
   fi
-  if [[ ($1 == "start" || $1 == "restart") && $brew_services == *"Running: false"* ]]; then
-    brew services start privoxy
+  if [[ $1 == "restart" && $brew_services == *"Running: true"* ]]; then
+    brew services restart privoxy
+    lw "restart"
+    exit 1
+  fi
+    if [[ $1 == "start" && $brew_services == *"Running: false"* ]]; then
+    brew services start
+    lw "start"
+    exit 1
+  fi
+  if [[ $1 == "restart" && $brew_services == *"Running: false"* ]]; then
+    brew services start
+    lw "restart"
     exit 1
   fi
   if [[ $1 == "stop" && $brew_services == *"Running: true"* ]]; then
     brew services stop privoxy
+    lw "stop"
     exit 1
   fi
   if [[ ($1 == "stop" && $brew_services == *"Running: true"*) || $brew_services == *"privoxy error"* ]]; then
-    echo "brew services stop privoxy"
     brew services stop privoxy
+    lw "stop"
     exit 1
   fi
 }
@@ -336,6 +352,8 @@ function bs() {
 # 
 # main (for lack of better words)
 # 
+
+# TODO: Figure out a simple and graceful way to start privoxy on ppilot.sh start
 
 # date and date sensitive values
 date_epoch=$(date +%s)
@@ -430,7 +448,7 @@ if [ ! -f "$filters_dir/distractions" ]; then
 fi
 
 # start, stop or restart
-if [[ $1 == "start" || $1 == "stop" || $1 == "restart" ]]; then
+if [[ $1 == "start" || $1 == "stop" || $1 == "restart" || $1 == "pid" ]]; then
   bs $1
 elif [[ $1 == "status" ]]; then
   status
