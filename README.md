@@ -215,7 +215,7 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
 6. Stop Privoxy via brew and start with Privoxy Pilot:
 
-    `brew services stop privoxy && /usr/local/etc/privoxy/ppilot.sh`
+    `brew services stop privoxy && /usr/local/etc/privoxy/ppilot.sh start`
 
 **Q. I did the "Install and configure Privoxy Pilot to be accessible by local network clients" but only the Mac hosting Privoxy can connect to the proxy server and no one from the local network can connect to the proxy server [hosted on the Mac].**
 
