@@ -294,7 +294,7 @@ if [[ $bs_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
   echo -e "          up: $(ct "$up_since" "y") ($(ct "$up_time" "y"))"
   echo -e "      config: $(ct "$config_date" "y") ($(ct "$(dd $config_file)" "y"))"
   echo -e "filter group: $(ct "$filter_group" "b")"
-  echo -e "     filters: $(ct "$filter_list" "b")"  
+  echo -e "filter lists: $(ct "$filter_list" "b")"  
   echo "              -------------------"
   lr 1
 elif [[ $output == *"none"* ]]; then
