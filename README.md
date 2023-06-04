@@ -251,7 +251,7 @@ A. Then there would be multiple config files to deal with. By using Privoxy Pilo
 
 **Q. Do you take donations?**
 
-A. No but I ask that you consider donating to the [Privoxy(https://www.privoxy.org/faq/general.html#DONATE)] project as none of this would've been possible without their hard work and dedication to building an invaluable application. 
+A. No but I ask that you consider donating to the [Privoxy](https://www.privoxy.org/faq/general.html#DONATE) project as none of this would've been possible without their hard work and dedication to building an invaluable application. 
 
 
 
