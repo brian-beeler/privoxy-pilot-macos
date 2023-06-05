@@ -206,7 +206,7 @@ Instructions on how to add to the "distractions" filter list and setting up cron
 
     `gzip -dk /usr/local/etc/privoxy/config.original.gz`
     
-    Now rerun the md5 checksum check command above. If there is no output it means the newly uncompressed config.original is the original config file. Following step 1 to copy config.original to config and continue to step 3.
+    Follow step 1 copy config.original to config and rerun the md5 checksum check command above. If there is no output it means the newly decompressed config.original copied to config is the original config file. Continue to step 3.
 
 3. Start Privoxy from brew:
 
