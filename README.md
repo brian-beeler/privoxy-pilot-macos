@@ -3,17 +3,7 @@ Privoxy Pilot bash script and set of templates to better manage Privoxy on macOS
 
 <BR>
 
----
-
-**Do not use anything from this project until this notice is removed!**
-
-**This project is still in active development and is not ready for public use in any way, shape or form. It is made public for very limited testing only. If you do use it in its current state it will break things and when that happens you are on your own. Some of the options listed are not currently functioning.**
-
----
-
-<BR>
-
-This project is still in its beginnings. If you have a question please ask. If you are not comfortable working in the terminal than ask someone that is to help you.
+This project is still in its early beginnings. If you have a question please ask. If you are not comfortable working in the terminal than ask someone that is to help you.
 
 [Privoxy](https://www.privoxy.org) is a wonderful project to which I'm in debt to its contributors. My project simply makes managing Privoxy's settings on macOS a bit easier. Features include:
 
