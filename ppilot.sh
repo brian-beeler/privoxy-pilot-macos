@@ -20,6 +20,7 @@
 #      lw():        log write: write log entries
 #      pp():  privoxy process: start, restart or stop the privoxy process
 #  status():   current status: displays privoxy status
+#    main():             main: first function to run
 
 # function blpfl(): download and create blp filter list
 function blpfl() {
@@ -344,7 +345,7 @@ function main() {
   chmod og+rw $log_file
   echo "$date_stamp_long      $log_file created" >> $log_file
   fi
-# checks for $filters_dir and $filters_blp_dir created. creates if not found
+  # checks for $filters_dir and $filters_blp_dir created. creates if not found
   if [ ! -d $filters_dir ]; then
     mkdir -p $filters_dir
     mkdir -p $filters_blp_dir
@@ -427,7 +428,7 @@ function main() {
   # filter template
   elif [[ $1 == "filter" ]]; then
     ft $2
-# 
+  #  
   else
     echo "usage: ./ppilot.sh [start|stop|restart|status|config|filter|log]"
     echo "  start                   start server"
