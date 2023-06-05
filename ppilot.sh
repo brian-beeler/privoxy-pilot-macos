@@ -12,7 +12,7 @@
 
 # functions:
 #   blpfl(): blp filter lists: download and edit blp filter lists
-#      bs():    brew services: 
+#      bs():    brew services: start, restart and stop calls to brew services
 #  config():      config list: list and choose .config list
 #      ct():       color text: colorizes text in ANSI RGB
 #      ft():  filter template: a template for creating new, custom filters lists
