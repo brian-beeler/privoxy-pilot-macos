@@ -40,7 +40,7 @@ function blpfl() {
     echo "# " >> $filter_file_name
     echo "  " >> $filter_file_name
     cat "$filters_blp_dir/$1-nl.txt" >> $filter_file_name
-    echo "$date_stamp_long     filter created $filter_file_name" >> $log_file
+    lw "filter $filter_file_name created"
     rm "$filters_blp_dir/$1-nl.txt"
   fi
 }
@@ -167,20 +167,28 @@ fi
 # function ct(): color text with ANSI colors
 function ct() {
     # $1=input text, $2=color
+    # red
     if [[ $2 == "r" ]]; then
         echo -e "\033[31m$1\033[0m"
+    # green
     elif [[ $2 == "g" ]]; then
         echo -e "\033[32m$1\033[0m"
+    # blue
     elif [[ $2 == "b" ]]; then
         echo -e "\033[34m$1\033[0m"
+    # cyan
     elif [[ $2 == "c" ]]; then
         echo -e "\033[36m$1\033[0m"
+    # magenta
     elif [[ $2 == "m" ]]; then
         echo -e "\033[35m$1\033[0m"
+    # yellow
     elif [[ $2 == "y" ]]; then
         echo -e "\033[33m$1\033[0m"
+    # red - blinking
     elif [[ $2 == "rb" ]]; then
         echo -e "\033[31;5m$1\033[0m"
+    # if unknow color option is passed then just echo input
     else
         echo "$1"
     fi
@@ -279,7 +287,7 @@ function lr() {
 # function lw(): log write. writes a log entry
 function lw() {
   # $1: text
-  echo "$date_stamp_long     privoxy $1"  >> $log_file
+  echo "$date_stamp_long     $1"  >> $log_file
 }
 # end lw()
 
@@ -343,14 +351,14 @@ function main() {
   if [ ! -f $log_file ]; then
   touch $log_file
   chmod og+rw $log_file
-  echo "$date_stamp_long      $log_file created" >> $log_file
+  lw "$log_file created"
   fi
   # checks for $filters_dir and $filters_blp_dir created. creates if not found
   if [ ! -d $filters_dir ]; then
     mkdir -p $filters_dir
     mkdir -p $filters_blp_dir
-    echo "$date_stamp_long     $filters_dir created"  >> $log_file
-    echo "$date_stamp_long     $filters_blp_dir created"  >> $log_file
+    lw "$filters_dir created"
+    lw "$filters_blp_dir created"
   fi
   # checks for $config_original_file, $config_bak_file and config_file. 
   # if all are missing something really, really wrong has happenned
@@ -365,9 +373,9 @@ function main() {
     gzip $config_original_file
     # macOS seems to have an issue with this
     chmod a-w $config_original_file.gz
-    echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
-    echo "$date_stamp_long     $config_bak_file created"  >> $log_file
-    echo "$date_stamp_long     $config_file created"  >> $log_file
+    lw "$config_original_file.gz created"
+    lw "$config_bak_file created"
+    lw "$config_file created"
   fi
   # checks for $config_file, no $config_bak_file and no $config_original_file.
   # most likely only happens on ppilot.sh inital run
@@ -379,8 +387,8 @@ function main() {
     gzip $config_original_file
     # macOS seems to have an issue with this
     chmod a-w $config_original_file.gz
-    echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
-    echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+    lw "$config_original_file.gz created"
+    lw "$config_bak_file created"
   fi
   # checks for config and no config.bak. creates config.bak 
   if [[ -f "$config_file" ]] && [[ ! -f "$config_bak_file" ]]; then
@@ -392,26 +400,26 @@ function main() {
     gzip $config_original_file
     # macOS seems to have an issue with this
     chmod a-w $config_original_file.gz
-    echo "$date_stamp_long     $config_bak_file created"  >> $log_file
-    echo "$date_stamp_long     $config_file created"  >> $log_file
+    lw "$config_bak_file created"
+    lw "$config_file created"
   fi
   # checks for config.mod and creates if not found
   if [ ! -f $config_mod_file ]; then
     echo -e "$(ct "getting" "g") $(ct "config.mod" "b")"
     curl --no-progress-meter -o $config_mod_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config.mod"
-    echo "$date_stamp_long     $config_mod_file created"  >> $log_file
+    lw "$config_mod_file created"
   fi
   # checks for mylist filter list and creates if not found
   if [ ! -f "$filters_dir/mylist" ]; then
     echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
     curl --no-progress-meter -o "$filters_dir/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
-    echo "$date_stamp_long     $filters_dir/mylist created"  >> $log_file
+    lw "$filters_dir/mylist created"
   fi
   # checks for distractions filter list and creates if not found
   if [ ! -f "$filters_dir/distractions" ]; then
     echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
     curl --no-progress-meter -o "$filters_dir/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
-    echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
+    lw "$filters_dir/distractions created"
   fi
 
   # start, stop or restart
@@ -442,5 +450,5 @@ function main() {
   fi
 }
 
-main $@
+main "$@"
 exit 0
