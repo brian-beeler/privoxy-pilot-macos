@@ -323,134 +323,123 @@ function status() {
 }
 # status()
 
+function main() {
+  # date and date sensitive values
+  date_epoch=$(date +%s)
+  date_stamp_long=$(date -r "$date_epoch" +"%a %b %d %Y %H:%M:%S %Z")
+  date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
+  date_stamp_ISO=$(date -r "$date_epoch" +"%Y-%m-%d %H:%M:%S")
+  config_original_file="/usr/local/etc/privoxy/config.original"
+  config_bak_file="/usr/local/etc/privoxy/config.bak"
+  config_tmp_file="/usr/local/etc/privoxy/config.tmp"
+  config_file="/usr/local/etc/privoxy/config"
+  config_mod_file="/usr/local/etc/privoxy/config.mod"
+  log_file="/var/log/privoxy.log"
+  filters_dir="/usr/local/etc/privoxy/filters"
+  filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
 
-#
-# end of functions
-#
-
-
-# 
-# main (for lack of better words)
-# 
-
-# TODO: Figure out a simple and graceful way to start privoxy on ppilot.sh start
-
-# date and date sensitive values
-date_epoch=$(date +%s)
-date_stamp_long=$(date -r "$date_epoch" +"%a %b %d %Y %H:%M:%S %Z")
-date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
-date_stamp_ISO=$(date -r "$date_epoch" +"%Y-%m-%d %H:%M:%S")
-config_original_file="/usr/local/etc/privoxy/config.original"
-config_bak_file="/usr/local/etc/privoxy/config.bak"
-config_tmp_file="/usr/local/etc/privoxy/config.tmp"
-config_file="/usr/local/etc/privoxy/config"
-config_mod_file="/usr/local/etc/privoxy/config.mod"
-log_file="/var/log/privoxy.log"
-filters_dir="/usr/local/etc/privoxy/filters"
-filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
-privoxy_bin="/usr/local/opt/privoxy/sbin/privoxy"
-ps_n="/usr/local/opt/privoxy/sbin/privoxy $config_file"
-ps_nnd="/usr/local/opt/privoxy/sbin/privoxy --no-daemon $config_file"
-ps_search=$(ps xa | grep "/usr/local/opt/privoxy/sbin/privoxy")
-
-# checking for log file exsistance
-if [ ! -f $log_file ]; then
+  # checking for log file exsistance
+  if [ ! -f $log_file ]; then
   touch $log_file
   chmod og+rw $log_file
   echo "$date_stamp_long      $log_file created" >> $log_file
-fi
+  fi
 # checks for $filters_dir and $filters_blp_dir created. creates if not found
-if [ ! -d $filters_dir ]; then
-  mkdir -p $filters_dir
-  mkdir -p $filters_blp_dir
-  echo "$date_stamp_long     $filters_dir created"  >> $log_file
-  echo "$date_stamp_long     $filters_blp_dir created"  >> $log_file
-fi
-# checks for $config_original_file, $config_bak_file and config_file. 
-# if all are missing something really, really wrong has happenned
-# Privoxy config version 3.0.34 used
-if [ ! -f $config_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_original_file ]; then
-  curl --no-progress-meter -o $config_original_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
-  cp $config_original_file $config_bak_file
-  cp $config_original_file $config_file
-  chmod ug+rw $config_file
-  chmod ug+rw $config_original_file
-  chmod ug+rw $config_bak_file
-  gzip $config_original_file
-  # macOS seems to have an issue with this
-  chmod a-w $config_original_file.gz
-  echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
-  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
-  echo "$date_stamp_long     $config_file created"  >> $log_file
-fi
-# checks for $config_file, no $config_bak_file and no $config_original_file.
-# most likely only happens on ppilot.sh inital run
-if [[ -f "$config_file" ]] && [[ ! -f "$config_original_file" ]] && [[ ! -f "$config_original_file.gz" ]] ; then
-  cp $config_file $config_original_file
-  cp $config_file $config_bak_file
-  chmod ug+rw $config_original_file
-  chmod ug+rw $config_bak_file
-  gzip $config_original_file
-  # macOS seems to have an issue with this
-  chmod a-w $config_original_file.gz
-  echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
-  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
-fi
-# checks for config and no config.bak. creates config.bak 
-if [[ -f "$config_file" ]] && [[ ! -f "$config_bak_file" ]]; then
-  gzip -d $config_original_file
-  cp $config_original_file $config_bak_file
-  cp $config_original_file $config_file
-  chmod a+rw $config_bak_file
-  chmod a+rw $config_file
-  gzip $config_original_file
-  # macOS seems to have an issue with this
-  chmod a-w $config_original_file.gz
-  echo "$date_stamp_long     $config_bak_file created"  >> $log_file
-  echo "$date_stamp_long     $config_file created"  >> $log_file
-fi
-# checks for config.mod and creates if not found
-if [ ! -f $config_mod_file ]; then
-  echo -e "$(ct "getting" "g") $(ct "config.mod" "b")"
-  curl --no-progress-meter -o $config_mod_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config.mod"
-  echo "$date_stamp_long     $config_mod_file created"  >> $log_file
-fi
-# checks for mylist filter list and creates if not found
-if [ ! -f "$filters_dir/mylist" ]; then
-  echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
-  curl --no-progress-meter -o "$filters_dir/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
-  echo "$date_stamp_long     $filters_dir/mylist created"  >> $log_file
-fi
-# checks for distractions filter list and creates if not found
-if [ ! -f "$filters_dir/distractions" ]; then
-  echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
-  curl --no-progress-meter -o "$filters_dir/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
-  echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
-fi
+  if [ ! -d $filters_dir ]; then
+    mkdir -p $filters_dir
+    mkdir -p $filters_blp_dir
+    echo "$date_stamp_long     $filters_dir created"  >> $log_file
+    echo "$date_stamp_long     $filters_blp_dir created"  >> $log_file
+  fi
+  # checks for $config_original_file, $config_bak_file and config_file. 
+  # if all are missing something really, really wrong has happenned
+  # Privoxy config version 3.0.34 used
+  if [ ! -f $config_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_original_file ]; then
+    curl --no-progress-meter -o $config_original_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
+    cp $config_original_file $config_bak_file
+    cp $config_original_file $config_file
+    chmod ug+rw $config_file
+    chmod ug+rw $config_original_file
+    chmod ug+rw $config_bak_file
+    gzip $config_original_file
+    # macOS seems to have an issue with this
+    chmod a-w $config_original_file.gz
+    echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
+    echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+    echo "$date_stamp_long     $config_file created"  >> $log_file
+  fi
+  # checks for $config_file, no $config_bak_file and no $config_original_file.
+  # most likely only happens on ppilot.sh inital run
+  if [[ -f "$config_file" ]] && [[ ! -f "$config_original_file" ]] && [[ ! -f "$config_original_file.gz" ]] ; then
+    cp $config_file $config_original_file
+    cp $config_file $config_bak_file
+    chmod ug+rw $config_original_file
+    chmod ug+rw $config_bak_file
+    gzip $config_original_file
+    # macOS seems to have an issue with this
+    chmod a-w $config_original_file.gz
+    echo "$date_stamp_long     $config_original_file.gz created"  >> $log_file
+    echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+  fi
+  # checks for config and no config.bak. creates config.bak 
+  if [[ -f "$config_file" ]] && [[ ! -f "$config_bak_file" ]]; then
+    gzip -d $config_original_file
+    cp $config_original_file $config_bak_file
+    cp $config_original_file $config_file
+    chmod a+rw $config_bak_file
+    chmod a+rw $config_file
+    gzip $config_original_file
+    # macOS seems to have an issue with this
+    chmod a-w $config_original_file.gz
+    echo "$date_stamp_long     $config_bak_file created"  >> $log_file
+    echo "$date_stamp_long     $config_file created"  >> $log_file
+  fi
+  # checks for config.mod and creates if not found
+  if [ ! -f $config_mod_file ]; then
+    echo -e "$(ct "getting" "g") $(ct "config.mod" "b")"
+    curl --no-progress-meter -o $config_mod_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config.mod"
+    echo "$date_stamp_long     $config_mod_file created"  >> $log_file
+  fi
+  # checks for mylist filter list and creates if not found
+  if [ ! -f "$filters_dir/mylist" ]; then
+    echo -e "$(ct "getting" "g") $(ct "filters/mylist" "b")"
+    curl --no-progress-meter -o "$filters_dir/mylist" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/mylist"
+    echo "$date_stamp_long     $filters_dir/mylist created"  >> $log_file
+  fi
+  # checks for distractions filter list and creates if not found
+  if [ ! -f "$filters_dir/distractions" ]; then
+    echo -e "$(ct "getting" "g") $(ct "filters/distractions" "b")"
+    curl --no-progress-meter -o "$filters_dir/distractions" "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/filters/distractions"
+    echo "$date_stamp_long     $filters_dir/distractions created"  >> $log_file
+  fi
 
-# start, stop or restart
-if [[ $1 == "start" || $1 == "stop" || $1 == "restart" ]]; then
-  bs $1
-elif [[ $1 == "status" ]]; then
-  status
-# config
-elif [ "$1" = "config" ]; then
-  config $1 $2 $3
-# display log file
-elif [[ $1 == "log" ]]; then
-  lr 0
-# filter template
-elif [[ $1 == "filter" ]]; then
-  ft $2
+  # start, stop or restart
+  if [[ $1 == "start" || $1 == "stop" || $1 == "restart" ]]; then
+    bs $1
+  elif [[ $1 == "status" ]]; then
+    status
+  # config
+  elif [ "$1" = "config" ]; then
+    config $1 $2 $3
+  # display log file
+  elif [[ $1 == "log" ]]; then
+    lr 0
+  # filter template
+  elif [[ $1 == "filter" ]]; then
+    ft $2
 # 
-else
-  echo "usage: ./ppilot.sh [start|stop|restart|status|config|filter|log]"
-  echo "  start                   start server"
-  echo "  stop                    stop server"
-  echo "  restart                 restart server"
-  echo "  status                  display privoxy status"
-  echo "  config list             list filter groups"
-  echo "  config set <group>      set filter group"
-  echo "  filter <name>           create new filter list"
-  echo "  log                     display log file"
-fi
+  else
+    echo "usage: ./ppilot.sh [start|stop|restart|status|config|filter|log]"
+    echo "  start                   start server"
+    echo "  stop                    stop server"
+    echo "  restart                 restart server"
+    echo "  status                  display privoxy status"
+    echo "  config list             list filter groups"
+    echo "  config set <group>      set filter group"
+    echo "  filter <name>           create new filter list"
+    echo "  log                     display log file"
+  fi
+}
+
+main $@
+exit 0

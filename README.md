@@ -242,15 +242,15 @@ The most common occurrence of this issue is when a Mac is being used a required 
 
 **Q. Why did you create Privoxy Pilot?**
 
-A. I, like many others, don't like being forced to accept having our actions tracked by companies that refuse to give us the option to opt out of such tracking or advertising that also track us in the same way. While web browsers do have an "opt out" option for receiving targeted advertising it is also optional for advertisers to honor that "opt out" request and to no one's surprise few honor that "opt out" request. There is simply too much profit in selling the details of our life, both online and offline, for amoral corporations to pass up. Privoxy and by extension Privoxy Pilot allows us to regain much of our privacy taken by those amoral corporations.
+A. I, like many others, don't like being forced to accept having our actions tracked by companies that refuse to give us the option to opt out of such tracking, or advertising that also tracks us in the same way. While web browsers do have an "opt out" option for receiving targeted advertising it is also optional for advertisers to honor that "opt out" request and to no one's surprise few honor that "opt out" request. There is simply too much profit in selling the details of our life, both online and offline, for amoral corporations to pass up. Privoxy and by extension Privoxy Pilot allows us to regain much of our privacy taken by those amoral corporations.
 
 **Why browser extensions aren't the answer**
 
-Browser extensions are easier to install and use, anyone that's used them knows there's limits on what they can block. Also websites are becoming better at detecting such browser extensions and are either finding ways to avoid their blocking techniques or just blocking a person from accessing their website until they disable their ad blocking extension [for the host's website]. 
+Browser extensions are easier to install and use, and anyone that's used them knows there's limits on what they can block. Also websites are becoming better at detecting such browser extensions and are either finding ways to avoid their blocking techniques or just blocking a person from accessing their website until they disable their ad blocking extension [for the host's website]. 
 
 **Why browser extensions' days might be limited or at least their ability to block ads and trackers will be limited**
 
-Google Chrome's [manifest v3](https://developer.chrome.com/docs/extensions/mv3/intro/) extension standard will make it difficult for ad blockers to function as they currently do under the current manifest v2 standard which will make blocking ads in Chrome much more difficult. Manifest v3 was a needed revision for security reasons but it will also make life much more difficult for the developers of ad blocking extensions in Chrome. Unsurprising other major websites have been following Google's lead to block access to their websites if they detect you're using a ad blocking browser extension. For more on this issue I recommend reading "[Mozilla solves the Manifest V3 puzzle to save ad blockers from Chromapocalypse](https://adguard.com/en/blog/firefox-manifestv3-chrome-adblocking.html)"
+Google Chrome's [manifest v3](https://developer.chrome.com/docs/extensions/mv3/intro/) extension standard will make it difficult for ad blockers to function as they currently do under the current manifest v2 standard which will make blocking ads in Chrome much more difficult. Manifest v3 is a needed revision for security reasons but it will also make life much more difficult for the developers of ad blocking and privacy extensions in Chrome. Unsurprising other major websites have been following Google's lead to block access to their websites if they detect you're using a ad blocking browser extension. For more on this issue I recommend reading "[Mozilla solves the Manifest V3 puzzle to save ad blockers from Chromapocalypse](https://adguard.com/en/blog/firefox-manifestv3-chrome-adblocking.html)"
 
 "Chris Titus Tech" has a good [video](https://www.youtube.com/watch?v=oQL9dVsEXT0) explaining this issue of manifest v3 and how Google is also starting to block access to YouTube if you're using an ad blocking extension. He discusses [Pi-hole](https://github.com/pi-hole/pi-hole) that acts as a "[DNS sinkhole](https://en.wikipedia.org/wiki/DNS_sinkhole)" which is also a way to remove unwanted advertising and tracking websites from your web browser. Like Privoxy Pilot Pi-hole also uses Block List Project filters. 
 
@@ -260,9 +260,15 @@ Privoxy avoids the issues faced by web browser ad blocking extensions by blockin
 
 I prefer using a proxy server method instead of a DNS sinkhole because it is easier for a host administrator to bypass if required, easier for an administrator to shut down if required and more difficult for users to bypass if their local network administrator has required them to use a proxy server but I highly recommend checking out their project as it has benefits over using a proxy server.
 
+**Why not just use a VPN to block advertising and tracking websites?**
+
+Remember the sentence "There is simply too much profit in selling the details of our life, both online and offline, for amoral corporations to pass up"? The same goes for VPN companies. Some are very good at protecting their users' privacy and some do little to protect their users' privacy and there's few options to sort out the good actors from the bad ones. On top of that you're paying for the privilege of the hope of privacy when in reality that hope might be misguided. VPNs have some important functions but depending on them to guarantee that tracking and advertising websites are not tracking you isn't one of them.
+
+Privoxy and Privoxy Pilot are open source so there's no where to hide from the truth of what our software does. It's not possible for VPNs to have that level of transparently.
+
 **But why not just Privoxy instead of also adding Privoxy Pilot?**
 
-Privoxy is an amazing program and I am in the debt of all those that contributed to it. In the interest of stability many times some features must be omitted. For example if Privoxy included support for the Block List Project, like Privoxy Pilot does, and for whatever reason their filter lists went offline then that would effect their entire user base. I agree with their choices and support them, and feel there's room to additions to their application for those that find a need for those additions.
+Privoxy is an amazing program and I am in the debt of all those that contributed to it. In the interest of stability many times some features must be omitted. For example if Privoxy included support for the Block List Project, like Privoxy Pilot does, and for whatever reason BLP's filter lists went offline then that would effect their entire user base. I agree with Privoxy's choices and support them, and feel there's room to additions to their application for those that find a need for such additions.
 
 **Q. Why is Privoxy Pilot a bash script and not a compiled application?**
 
