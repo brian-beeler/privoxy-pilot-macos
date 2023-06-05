@@ -118,6 +118,10 @@ status of server
 
 list filter groups
 
+`/usr/local/etc/privoxy/ppilot.sh config <filter group>`
+
+set a filter group
+
 `/usr/local/etc/privoxy/ppilot.sh filter <name>`
 
 create new filter list with <name>
