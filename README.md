@@ -11,7 +11,7 @@ This project is still in its early beginnings. If you have a question please [as
   - current filter group with their filters lists
   - past events
   
-    ![ppilot status screen](https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_status.png)
+    ![ppilot status screen](https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_status_screen.png)
 
   - detailed logging of events as transacted with Privoxy Pilot
   - ability to easily create custom filter lists
