@@ -184,7 +184,7 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
 The web is full of distractions that often take us away from more important tasks hence the reason for the "distractions" filter list and group which allows you to block sites that you don't want to see during working hours.
 
-Instructions on how to add to the "distractions" filter list and set up crontab to automatically switch back and forth from the "default" and "distractions" filter group coming soon.
+Instructions on how to add to the "distractions" filter list and setting up crontab to automatically switch back and forth between the "default" and "distractions" filter groups coming soon.
 
 <BR>
 
