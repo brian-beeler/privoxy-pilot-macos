@@ -49,22 +49,25 @@ function blpfl() {
 function bs() {
   local brew_services=$(brew services info privoxy)
   if [[ $1 == "start" && $brew_services == *"Running: true"* ]]; then
-    brew services
+    status
     exit 1
   fi
   if [[ $1 == "restart" && $brew_services == *"Running: true"* ]]; then
     brew services restart privoxy
     lw "restart"
+    status
     exit 1
   fi
     if [[ $1 == "start" && $brew_services == *"Running: false"* ]]; then
     brew services start privoxy
     lw "start"
+    status
     exit 1
   fi
   if [[ $1 == "restart" && $brew_services == *"Running: false"* ]]; then
     brew services start provixy
     lw "restart"
+    status
     exit 1
   fi
   if [[ $1 == "stop" && $brew_services == *"Running: true"* ]]; then
@@ -155,6 +158,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   lw "config $3 active"
   bs restart
   lw "restart"
+  status
 fi 
 }
 # end config()

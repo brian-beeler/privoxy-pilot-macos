@@ -79,15 +79,15 @@ If you don't want to accept any connections from clients on your local network o
   
 ### **Configure Privoxy Pilot for initial start**
 
-1. Run Privoxy Pilot status: 
+1. Run Privoxy Pilot start: 
    
-    `/usr/local/etc/privoxy/ppilot.sh status`
+    `/usr/local/etc/privoxy/ppilot.sh start`
 
-    This will perform a series of checks for the configuration files required to run and display what actions took place in the "log" section of status
+    This will perform a series of checks for the configuration files required to run, start Privoxy and display the current status of Privoxy with Privoxy Pilot extensions.
 
 2. Run Privoxy Pilot to have the "default" filter list group activated:  
    
-    `/usr/local/etc/privoxy/ppilot.sh config set default && /usr/local/etc/privoxy/ppilot.sh status`
+    `/usr/local/etc/privoxy/ppilot.sh config set default`
 
     This will configure Privoxy to use the default filter set which consists of lists from Block List Project and a local file "/usr/local/etc/privoxy/filters/mylist" where you can add websites you want blocked. Locally created and managed filter lists are found in "/usr/local/etc/privoxy/filters". Block List Project filters are stored in "/usr/local/etc/privoxy/filters/blp" and should not be edited as they are automatically updated every week.
 
