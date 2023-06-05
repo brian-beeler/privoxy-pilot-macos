@@ -196,7 +196,7 @@ Instructions on how to add to the "distractions" filter list and setting up cron
     
     `cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config`
 
-2. Config that config.original is the same as the installed config file:
+2. Confirm that config.original is the same as the installed config file:
 
     `md5 -q config | diff - config.md5`
 
