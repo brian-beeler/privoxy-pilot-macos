@@ -196,13 +196,25 @@ Instructions on how to add to the "distractions" filter list and setting up cron
     
     `cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config`
 
-2. Start Privoxy from brew:
+2. Config that config.original is the same as the installed config file:
+
+    `md5 -q config | diff - config.md5`
+
+    If you see no output then the two files are identical and the as installed Privoxy config file has been restored. Continue to step 3. 
+    
+    If you see an output with two md5 checksums then the as installed Privoxy config file has not been restored. Decompress the compressed backup of config.original:
+
+    `gzip -dk /usr/local/etc/privoxy/config.original.gz`
+    
+    Now rerun the md5 checksum check command above. If there is no output it means the newly uncompressed config.original is the original config file. Following step 1 to copy config.original to config and continue to step 3.
+
+3. Start Privoxy from brew:
 
     `brew services start privoxy`
 
-3. If you see "==> Successfully started privoxy" then it's possible that there was a problem in the previous config file. 
+   If you see "==> Successfully started privoxy" then it's possible there was a problem in the previous config file. Continue to step 4.
    
-   If you don't since Privoxy has been returned to its original installation state that's where the problem lies. The first place to check is the Privoxy [documentation](https://www.privoxy.org/user-manual/index.html). Also refer to the Homebrew [documentation](https://docs.brew.sh/) and their [community group](https://github.com/orgs/Homebrew/discussions). 
+   After restoring the original Privoxy configuration if you don't see "==> Successfully started privoxy" then something has gone wrong with Privoxy or Homebrew in its management of Privoxy. The first place to check is the Privoxy [documentation](https://www.privoxy.org/user-manual/index.html). Also refer to the Homebrew [documentation](https://docs.brew.sh/) and their [community group](https://github.com/orgs/Homebrew/discussions). 
 
 4. On the Mac that is hosting Privoxy try going to "ads.com". You should see the Privoxy block page. This means Privoxy is working.
    
