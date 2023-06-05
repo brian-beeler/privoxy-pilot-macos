@@ -269,7 +269,7 @@ Remember the sentence "There is simply too much profit in selling the details of
 
 Privoxy and Privoxy Pilot are open source so there's no where to hide from the truth of what our software does. It's not possible for VPNs to have that level of transparently.
 
-**But why not just Privoxy instead of also adding Privoxy Pilot?**
+**But why not just use Privoxy instead of also adding Privoxy Pilot?**
 
 Privoxy is an amazing program and I am in the debt of all those that contributed to it. In the interest of stability many times some features must be omitted. For example if Privoxy included support for the Block List Project, like Privoxy Pilot does, and for whatever reason BLP's filter lists went offline then that would effect their entire user base. I agree with Privoxy's choices and support them, and feel there's room to additions to their application for those that find a need for such additions.
 
