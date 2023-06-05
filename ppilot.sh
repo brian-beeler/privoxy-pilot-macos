@@ -15,7 +15,6 @@
 #      bs():    brew services: 
 #  config():      config list: list and choose .config list
 #      ct():       color text: colorizes text in ANSI RGB
-#      dd():  date difference: calcutates the amount of time since a file has been modified
 #      ft():  filter template: a template for creating new, custom filters lists
 #      lr():         log read: displays log files with ANSI colors
 #      lw():        log write: write log entries
@@ -136,7 +135,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   #cleans filter_list of \r
   filter_list=$(echo "$filter_list" | tr -d '\r')
   # write to a clean config
-  echo "# $date_stamp_long" >> $config_tmp_file
+  echo "# $date_stamp_long $date_epoch" >> $config_tmp_file
   echo "# filter group: $3" >> $config_tmp_file
   echo "# filter list: $filter_list" >> $config_tmp_file
   IFS=',' read -ra filters <<< "$filter_list"
@@ -182,29 +181,6 @@ function ct() {
     fi
 }
 # end ct()
-
-# function dd(): age of file or date difference between now and date file was created
-function dd() {
-    local file="$1"
-    local file_date=$(date -r "$file" +%s)
-    if [ -e "$file" ]; then
-      local diff=$((date_epoch - file_date))
-      local s=$(printf "%02d" $((diff % 60)))
-      local m=$(printf "%02d" $((diff % (60 * 60) / 60)))
-      local h=$(printf "%02d" $((diff % (60 * 60 * 24) / (60 * 60))))
-      local d=$(printf "%02d" $((diff / (60 * 60 * 24))))
-      if [ "$d" -gt 0 ]; then
-        echo "$d:$h:$m:$s"
-      elif [ "$h" -gt 0 ]; then
-        echo "$h:$m:$s"
-      else
-        echo "$m:$s"
-      fi
-    else
-      echo "File $file does not exist."
-    fi
-}
-# end dd()
 
 # function ft(): filter file template
 function ft() {
@@ -305,30 +281,36 @@ function lw() {
 # function status(): display privoxy status including PID, uptime,
 function status() {
   local bs=$(brew services info privoxy)
+  local cf_date=$(head -n 1 $config_file | tail -n 1)
+  local cf_date=($cf_date)
+  local cf_date_epoch="${cf_date[7]}"
+  cf_date=$(date -r $cf_date_epoch "+%a %b %d %T")
+  local cf_age=$(date -u -r "$(( $date_epoch - $cf_date_epoch ))" "+%H:%M:%S")
+  local filter_group=$(head -n 2 $config_file | tail -n 1)
+  local filter_list=$(head -n 3 $config_file | tail -n 1)
+  filter_group=($filter_group)
+  filter_list=($filter_list)
+  filter_group="${filter_group[3]}"
+  filter_list="${filter_list[3]}"
   bs=($bs)
   local bs_user=${bs[9]}
   local bs_pid=${bs[11]}
-  local filter_group=$(head -n 2 $config_file | tail -n 1)
-  filter_group=($filter_group)
-  filter_group="${filter_group[3]}"
-  local filter_list=$(head -n 3 $config_file | tail -n 1)
-  filter_list=($filter_list)
-  filter_list="${filter_list[3]}"
   if [[ $bs_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
     local up_since=$(ps -p $bs_pid -o lstart= | awk '{print $1,$2,$3,$4}')
     up_since=($up_since)
     [[ ${#up_since[2]} -eq 1 ]] && up_since[2]="0${up_since[2]}"
     up_since="${up_since[0]} ${up_since[1]} ${up_since[2]} ${up_since[3]}"
     local up_time=$(ps -p $bs_pid -o etime= )
+    [[ ${#up_time} -eq 5 ]] && up_time="00:$up_time"
     local up="$(ct "$up_since" "y") ($(ct "$up_time" "y"))"
   else
     local up=""
   fi
-  config_date=$(ls -lD "%a %b %d %H:%M:%S" $config_file | awk '{print $6,$7,$8,$9}')
+  #local cf_date=$(ls -lD "%a %b %d %H:%M:%S" $config_file | awk '{print $6,$7,$8,$9}')
   echo -e "         pid: $(ct "$bs_pid" "y")"
   echo -e "        user: $(ct "$bs_user" "y")"
   echo -e "          up: $up"
-  echo -e "      config: $(ct "$config_date" "y") ($(ct "$(dd $config_file)" "y"))"
+  echo -e "      config: $(ct "$cf_date" "y") ($(ct "$cf_age" "y"))"
   echo -e "filter group: $(ct "$filter_group" "b")"
   echo -e "filter lists: $(ct "$filter_list" "b")"  
   echo "              -------------------"
@@ -353,6 +335,7 @@ function status() {
 date_epoch=$(date +%s)
 date_stamp_long=$(date -r "$date_epoch" +"%a %b %d %Y %H:%M:%S %Z")
 date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
+date_stamp_ISO=$(date -r "$date_epoch" +"%Y-%m-%d %H:%M:%S")
 config_original_file="/usr/local/etc/privoxy/config.original"
 config_bak_file="/usr/local/etc/privoxy/config.bak"
 config_tmp_file="/usr/local/etc/privoxy/config.tmp"
