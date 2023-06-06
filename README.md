@@ -1,5 +1,3 @@
-* TOC
-{:toc}
 ## **privoxy-pilot-macos**
 
 Privoxy Pilot bash script and set of templates to better manage Privoxy on macOS. It is not connected to the Privoxy project.
