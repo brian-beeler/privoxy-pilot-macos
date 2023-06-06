@@ -1,4 +1,6 @@
-# **privoxy-pilot-macos**
+* TOC
+{:toc}
+## **privoxy-pilot-macos**
 Privoxy Pilot bash script and set of templates to better manage Privoxy on macOS. It is not connected to the Privoxy project.
 
 
@@ -24,7 +26,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 <BR>
 
-## **Install Homebrew**
+### **Install Homebrew**
 
 1. If not already installed, install the [Homebrew](https://en.wikipedia.org/wiki/Homebrew_(package_manager)) package manager:
    
@@ -32,7 +34,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 <BR>
 
-## **Install Privoxy**
+### **Install Privoxy**
 
 1. Install Privoxy via brew:
 
@@ -60,18 +62,18 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 <BR>
 
-## **Configure Privoxy and install Privoxy Pilot**
+### **Configure Privoxy and install Privoxy Pilot**
 
 Your choices are to either allow Privoxy to be accessible to clients on your local network or only by the Mac on which it is installed.
 If you're unsure if your IP address is static then follow the instructions in "Configure Privoxy Pilot for single host use only" below "Configure Privoxy to be accessed by other local network clients and install Privoxy Pilot."
 
-### **Install and configure Privoxy Pilot to be accessible by local network clients**
+#### **Install and configure Privoxy Pilot to be accessible by local network clients**
 
  It is recommended that Privoxy be accessible to clients on your local network **but only if you have a static IP address.** By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
 
-### **Install and configure Privoxy Pilot for single host use only**
+#### **Install and configure Privoxy Pilot for single host use only**
 
 If you don't want to accept any connections from clients on your local network or don't have a static IP address this is the preferred installation and configuration.
 
@@ -79,7 +81,7 @@ If you don't want to accept any connections from clients on your local network o
     
 <BR>
   
-### **Configure Privoxy Pilot for initial start**
+#### **Configure Privoxy Pilot for initial start**
 
 1. Run Privoxy Pilot start: 
    
@@ -95,7 +97,7 @@ If you don't want to accept any connections from clients on your local network o
 
 <BR>
 
-## **Options**
+### **Options**
 
 `/usr/local/etc/privoxy/ppilot.sh`
 
@@ -135,7 +137,7 @@ display log
 
 <BR>
 
-## **Creating a new filter list**
+### **Creating a new filter list**
 
 1. View a list of existing local filter groups and lists:  
    
@@ -149,7 +151,7 @@ display log
 
 <BR>
 
-## **Create a new or edit an existing filter group**
+### **Create a new or edit an existing filter group**
 
 1. Edit the config.mod file and follow the instructions in the comments: 
     
@@ -159,7 +161,7 @@ display log
 
 <BR>
 
-## **Editing Privoxy options after Privoxy Pilot has been run**
+### **Editing Privoxy options after Privoxy Pilot has been run**
 
 While not common editing the original Privoxy config file is sometimes necessary. It's important to edit the config file that was created on Privoxy's installation. The original config file untouched by Privoxy Pilot is stored in "/usr/local/etc/privoxy/config.original.gz". To edit:
 
@@ -183,7 +185,7 @@ You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/p
 
 <BR>
 
-## **Setting up and switching between the "default" to "distractions" filter groups**
+### **Setting up and switching between the "default" to "distractions" filter groups**
 
 The web is full of distractions that often take us away from more important tasks hence the reason for the "distractions" filter list and group which allows you to block sites that you don't want to see during working hours.
 
@@ -191,7 +193,7 @@ Instructions on how to add to the "distractions" filter list and setting up cron
 
 <BR>
 
-## **Questions**
+### **Questions**
 
 **Q. Privoxy doesn't seem to be working. What can I do?**
 
@@ -241,7 +243,7 @@ The most common occurrence of this issue is when a Mac is being used a required 
 
 <BR>
 
-## **FAQ**
+### **FAQ**
 
 **Q. Why did you create Privoxy Pilot?**
 
