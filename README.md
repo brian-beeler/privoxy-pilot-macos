@@ -287,7 +287,13 @@ A. Then there would be multiple config files to deal with. By using Privoxy Pilo
 
 A. No but I ask that you consider donating to the [Privoxy](https://www.privoxy.org/faq/general.html#DONATE) project as none of this would've been possible without their hard work and dedication to building an invaluable application. 
 
+<BR>
 
+### **Versions**
+
+- v1.01
+  - fixed formatting issues with lapsed time from PID and config creation date to consistent HH:MM:SS.
+  - fixed config date up time delay when config set <filter set> evoked.
 
 
 

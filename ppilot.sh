@@ -1,5 +1,9 @@
 #!/bin/bash
-
+#
+# privoxy-pilot-macos v1.01
+#   v1.01:   fixed formatting issues with lapsed time from PID and config creation date to consistent HH:MM:SS.
+#            fixed config date up time delay when config set <filter set> evoked.
+#
 # copyright © Brian Beeler 2023 under CC BY-SA license
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 # Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
@@ -291,14 +295,19 @@ function lw() {
 }
 # end lw()
 
+#
+# TODO: calc up time with new date
 # function status(): display privoxy status including PID, uptime,
 function status() {
   local bs=$(brew services info privoxy)
+  # $date_epoch updated local for latest date 
+  local date_epoch=$(date +%s)
   local cf_date=$(head -n 1 $config_file | tail -n 1)
   local cf_date=($cf_date)
   local cf_date_epoch="${cf_date[7]}"
   cf_date=$(date -r $cf_date_epoch "+%a %b %d %T")
-  local cf_age=$(date -u -r "$(( $date_epoch - $cf_date_epoch ))" "+%H:%M:%S")
+  local cf_lapse="$(td "$date_epoch" "$cf_date_epoch")"
+  local cf_dl="$(ct "$cf_date" "y") ($(ct "$cf_lapse" "y"))"
   local filter_group=$(head -n 2 $config_file | tail -n 1)
   local filter_list=$(head -n 3 $config_file | tail -n 1)
   filter_group=($filter_group)
@@ -309,28 +318,40 @@ function status() {
   local bs_user=${bs[9]}
   local bs_pid=${bs[11]}
   if [[ $bs_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
-    local up_since=$(ps -p $bs_pid -o lstart= | awk '{print $1,$2,$3,$4}')
-    up_since=($up_since)
-    [[ ${#up_since[2]} -eq 1 ]] && up_since[2]="0${up_since[2]}"
-    up_since="${up_since[0]} ${up_since[1]} ${up_since[2]} ${up_since[3]}"
-    local up_time=$(ps -p $bs_pid -o etime= )
-    [[ ${#up_time} -eq 5 ]] && up_time="00:$up_time"
-    local up="$(ct "$up_since" "y") ($(ct "$up_time" "y"))"
+    local up_date=$(ps -p $bs_pid -o lstart=)
+    up_date=($up_date)
+    [[ ${#up_date[2]} -eq 1 ]] && up_date[2]="0${up_date[2]}"
+    up_date="${up_date[0]} ${up_date[1]} ${up_date[2]} ${up_date[3]}"
+    local up_time=$(td "$date_epoch" "$(date -jf "%a %b %d %T %Y" "$up_date" +%s)" )
+    local up_date_time="$(ct "$up_date" "y") ($(ct "$up_time" "y"))"
   else
-    local up=""
+    local up_date_time=""
   fi
-  #local cf_date=$(ls -lD "%a %b %d %H:%M:%S" $config_file | awk '{print $6,$7,$8,$9}')
   echo -e "         pid: $(ct "$bs_pid" "y")"
   echo -e "        user: $(ct "$bs_user" "y")"
-  echo -e "          up: $up"
-  echo -e "      config: $(ct "$cf_date" "y") ($(ct "$cf_age" "y"))"
+  echo -e "          up: $up_date_time"
+  echo -e "      config: $(ct "$cf_date" "y") ($(ct "$cf_lapse" "y"))"
   echo -e "filter group: $(ct "$filter_group" "b")"
   echo -e "filter lists: $(ct "$filter_list" "b")"  
   echo "              -------------------"
   lr 1
-
 }
 # status()
+
+# time difference between to times expressed in HH:MM:SS
+function td(){
+  if [[ $1 =~ ^[1-9][0-9]*$ && $2 =~ ^[1-9][0-9]*$ ]]; then
+    local seconds=$(($1-$2))
+    if [[ $seconds -lt 0 ]]; then
+      seconds=${seconds#-}
+    fi
+    local hours=$((seconds/3600))
+    local minutes=$(((seconds%3600)/60))
+    local seconds=$((seconds%60))
+    local diff=$(printf "%02d:%02d:%02d\n" $hours $minutes $seconds)
+    echo "$diff"
+  fi
+}
 
 function main() {
   # date and date sensitive values
@@ -338,6 +359,7 @@ function main() {
   date_stamp_long=$(date -r "$date_epoch" +"%a %b %d %Y %H:%M:%S %Z")
   date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
   date_stamp_ISO=$(date -r "$date_epoch" +"%Y-%m-%d %H:%M:%S")
+  # TODO: mv config_ cf_
   config_original_file="/usr/local/etc/privoxy/config.original"
   config_bak_file="/usr/local/etc/privoxy/config.bak"
   config_tmp_file="/usr/local/etc/privoxy/config.tmp"
