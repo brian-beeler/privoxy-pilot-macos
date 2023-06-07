@@ -2,7 +2,8 @@
 #
 # privoxy-pilot-macos v1.01
 #   v1.01:   fixed formatting issues with lapsed time from PID and config creation date to consistent HH:MM:SS.
-#            fixed config date up time delay when config set <filter set> evoked.
+#            fixed config date up time delay when config set <filter set> evoked by local date update to $date_epoch in status().
+#            renamed $bs in status() to $bsip to avoid confusion with bs().
 #
 # copyright © Brian Beeler 2023 under CC BY-SA license
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -10,10 +11,13 @@
 # Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 # Neither the name of copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# This project is still in its very beginnings and only made public for developement purposes. 
-# Do not use anything here until this notice is remove. If you do it will break things.
-
+#
+# This project is still in its early beginnings. 
+# Please post any questions or issues to: https://github.com/brian-beeler/privoxy-pilot-macos/issues 
+# If you are not comfortable working in the terminal than ask someone that is to help you. 
+#
+# TODO: new script to check for new version of ppilot. check during set intervals from ppilot
+# 
 # functions:
 #   blpfl(): blp filter lists: download and edit blp filter lists
 #      bs():    brew services: start, restart and stop calls to brew services
@@ -296,10 +300,9 @@ function lw() {
 # end lw()
 
 #
-# TODO: calc up time with new date
 # function status(): display privoxy status including PID, uptime,
 function status() {
-  local bs=$(brew services info privoxy)
+  local bsip=$(brew services info privoxy)
   # $date_epoch updated local for latest date 
   local date_epoch=$(date +%s)
   local cf_date=$(head -n 1 $config_file | tail -n 1)
@@ -314,11 +317,11 @@ function status() {
   filter_list=($filter_list)
   filter_group="${filter_group[3]}"
   filter_list="${filter_list[3]}"
-  bs=($bs)
-  local bs_user=${bs[9]}
-  local bs_pid=${bs[11]}
-  if [[ $bs_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
-    local up_date=$(ps -p $bs_pid -o lstart=)
+  bsip=($bsip)
+  local bsip_user=${bsip[9]}
+  local bsip_pid=${bsip[11]}
+  if [[ $bsip_pid =~ ^0*[1-9][0-9]{0,6}$ ]]; then
+    local up_date=$(ps -p $bsip_pid -o lstart=)
     up_date=($up_date)
     [[ ${#up_date[2]} -eq 1 ]] && up_date[2]="0${up_date[2]}"
     up_date="${up_date[0]} ${up_date[1]} ${up_date[2]} ${up_date[3]}"
@@ -327,8 +330,8 @@ function status() {
   else
     local up_date_time=""
   fi
-  echo -e "         pid: $(ct "$bs_pid" "y")"
-  echo -e "        user: $(ct "$bs_user" "y")"
+  echo -e "         pid: $(ct "$bsip_pid" "y")"
+  echo -e "        user: $(ct "$bsip_user" "y")"
   echo -e "          up: $up_date_time"
   echo -e "      config: $(ct "$cf_date" "y") ($(ct "$cf_lapse" "y"))"
   echo -e "filter group: $(ct "$filter_group" "b")"
@@ -359,7 +362,6 @@ function main() {
   date_stamp_long=$(date -r "$date_epoch" +"%a %b %d %Y %H:%M:%S %Z")
   date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
   date_stamp_ISO=$(date -r "$date_epoch" +"%Y-%m-%d %H:%M:%S")
-  # TODO: mv config_ cf_
   config_original_file="/usr/local/etc/privoxy/config.original"
   config_bak_file="/usr/local/etc/privoxy/config.bak"
   config_tmp_file="/usr/local/etc/privoxy/config.tmp"
