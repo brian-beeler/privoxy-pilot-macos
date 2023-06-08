@@ -4,6 +4,7 @@
 #   v1.01:   fixed formatting issues with lapsed time from PID and config creation date to consistent HH:MM:SS.
 #            fixed config date up time delay when config set <filter set> evoked by local date update to $date_epoch in status().
 #            renamed $bs in status() to $bsip to avoid confusion with bs().
+#            made lr() number of entries returned adjustable
 #
 # copyright © Brian Beeler 2023 under CC BY-SA license
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -246,11 +247,12 @@ function ft() {
 # function lr(): log read. displays log files in ANSI colors
 function lr() {
   # $1: "0" = no header, "1" = header
+  # $2: number of log entries returned
   # 
   # 
   log_file_line_count=$(wc -l < "$log_file")
   if (( log_file_line_count > 10 )); then
-    log_file_line_count=10
+    log_file_line_count=$2
   fi
   
   local log=$(tail -n $log_file_line_count $log_file)
@@ -337,7 +339,7 @@ function status() {
   echo -e "filter group: $(ct "$filter_group" "b")"
   echo -e "filter lists: $(ct "$filter_list" "b")"  
   echo "              -------------------"
-  lr 1
+  lr 1 6
 }
 # status()
 
@@ -456,7 +458,7 @@ function main() {
     config $1 $2 $3
   # display log file
   elif [[ $1 == "log" ]]; then
-    lr 0
+    lr 0 6
   # filter template
   elif [[ $1 == "filter" ]]; then
     ft $2
