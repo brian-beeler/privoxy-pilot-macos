@@ -27,9 +27,9 @@ When stable I plan on using what has been done here and building the privoxy-pil
 #### **Updates**
 
 - v1.01 (2023-06-11)
-  - fixed formatting issues with lapsed time from PID and config creation date to consistent HH:MM:SS.
+  - fixed formatting issues with lapsed time from PID and config creation dates to consistent HH:MM:SS.
   - fixed config date up time delay when config set <filter set> evoked.
-  - renamed $bs in status() to $bsip to avoid confusion with bs().
+  - renamed $bs in status() to $bsip (brew services info privoxy) to avoid confusion with bs() (brew services).
   - made lr() number of entries returned adjustable. i.e.: ppilot.sh status 20 returns last 20 log entries.
   - added hostname to privoxy "blocked" page instead of just saying "unknown".
 

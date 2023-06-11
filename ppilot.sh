@@ -5,7 +5,7 @@
 #            fixed config date up time delay when config set <filter set> evoked by local date update to $date_epoch in status().
 #            renamed $bs in status() to $bsip to avoid confusion with bs().
 #            made lr() number of entries returned adjustable
-#            added hostname to privoxy "blocked" page 
+#            added hostname to privoxy "blocked" page instead of just saying "unknown"
 #
 # copyright © Brian Beeler 2023 under CC BY-SA license
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -255,14 +255,16 @@ function lr() {
   # $2: number of log entries returned
   # 
   # 
-  log_file_line_count=$(wc -l < "$log_file")
-  if (( log_file_line_count > 10 )); then
-    log_file_line_count=$2
-  fi
-  
-  local log=$(tail -n $log_file_line_count $log_file)
-
-  for ((i=1; i<=$log_file_line_count; i++)); do
+  local log_entries_out=$2
+  local log_file_line_count=$(wc -l /var/log/privoxy.log | awk '{print $1}')
+  # regex check for positive integer else log_entries_out=10
+  [[ $log_entries_out =~ ^[1-9][0-9]?$ ]] || log_entries_out=10
+  # check to see if requested lines out is not greater than log length
+  [[ $log_entries_out -gt $log_file_line_count ]] && log_entries_out=$log_file_line_count
+  # max 30 log entries out
+  [[ $log_entries_out -gt 31 ]] && log_entries_out=30
+  local log=$(tail -n $log_entries_out $log_file)
+  for ((i=1; i<=$log_entries_out; i++)); do
     line=$(echo "$log" | awk "NR==$i")
     local sl="$line"
     local sl_date=$(ct "${sl:0:10} ${sl:16:8}" "y")
@@ -464,7 +466,7 @@ function main() {
     config $1 $2 $3
   # display log file
   elif [[ $1 == "log" ]]; then
-    lr 0 6
+    lr 0 $2
   # filter template
   elif [[ $1 == "filter" ]]; then
     ft $2
