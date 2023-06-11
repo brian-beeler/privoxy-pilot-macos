@@ -5,6 +5,7 @@
 #            fixed config date up time delay when config set <filter set> evoked by local date update to $date_epoch in status().
 #            renamed $bs in status() to $bsip to avoid confusion with bs().
 #            made lr() number of entries returned adjustable
+#            added hostname to privoxy "blocked" page 
 #
 # copyright © Brian Beeler 2023 under CC BY-SA license
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -162,7 +163,11 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
     if [[ " ${filters_dir_file_names[@]} " =~ " $filter " ]]; then
       echo "actionsfile $filters_dir/$filter" >> $config_tmp_file
     fi
-  done  
+  done
+  echo "# " >> $config_tmp_file
+  if [ -n $hostname ]; then
+    echo "hostname $hostname" >> $config_tmp_file
+  fi
   cat $config_bak_file >> $config_tmp_file
   mv $config_tmp_file $config_file
   lw "config $3 active"
@@ -339,7 +344,7 @@ function status() {
   echo -e "filter group: $(ct "$filter_group" "b")"
   echo -e "filter lists: $(ct "$filter_list" "b")"  
   echo "              -------------------"
-  lr 1 6
+  lr 1 $1
 }
 # status()
 
@@ -372,6 +377,7 @@ function main() {
   log_file="/var/log/privoxy.log"
   filters_dir="/usr/local/etc/privoxy/filters"
   filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
+  hostname=$(hostname)
 
   # checking for log file exsistance
   if [ ! -f $log_file ]; then
@@ -452,7 +458,7 @@ function main() {
   if [[ $1 == "start" || $1 == "stop" || $1 == "restart" ]]; then
     bs $1
   elif [[ $1 == "status" ]]; then
-    status
+    status $2
   # config
   elif [ "$1" = "config" ]; then
     config $1 $2 $3
