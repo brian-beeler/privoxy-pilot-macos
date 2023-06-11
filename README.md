@@ -33,8 +33,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
   - made lr() number of entries returned adjustable. i.e.: ppilot.sh status 20 returns last 20 log entries.
   - added hostname to privoxy "blocked" page instead of just saying "unknown".
 
-<hr style="border: 2px solid black;">
-<BR><HR>
+<BR><hr style="border: 1px solid black;">
 
 ### **Install Homebrew**
 
