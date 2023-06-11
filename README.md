@@ -26,7 +26,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 #### **Updates**
 
-- v1.01
+- v1.01 (2023-06-11)
   - fixed formatting issues with lapsed time from PID and config creation date to consistent HH:MM:SS.
   - fixed config date up time delay when config set <filter set> evoked.
   - renamed $bs in status() to $bsip to avoid confusion with bs().
