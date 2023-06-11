@@ -476,11 +476,13 @@ function main() {
     echo "  start                   start server"
     echo "  stop                    stop server"
     echo "  restart                 restart server"
-    echo "  status                  display privoxy status"
+    echo "  status <number>         display privoxy status with optional number of log entries up to 30"
+    echo "                            default is 10"
     echo "  config list             list filter groups"
     echo "  config set <group>      set filter group"
     echo "  filter <name>           create new filter list"
-    echo "  log                     display log file"
+    echo "  log <number>            display log file with optional number of entries up to 30"
+    echo "                            default is 10"
   fi
 }
 
