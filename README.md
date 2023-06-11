@@ -24,7 +24,7 @@ This project is still in its early beginnings. If you have a question please [as
 
 When stable I plan on using what has been done here and building the privoxy-pilot-ChromeOS project.
 
-### **Updates**
+#### **Updates**
 
 - v1.01
   - fixed formatting issues with lapsed time from PID and config creation date to consistent HH:MM:SS.
