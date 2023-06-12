@@ -5,7 +5,7 @@ Privoxy Pilot a collection of bash scripts and set of templates to better manage
 
 <BR>
 
-2023-06-23: PLEASE DO NOT INSTALL PRIVOXY PILOT UNTIL THIS NOTICE IS REMOVED. We're currently changing our installation script and expect it to be finished on Wednesday 2023-06-25. We apologize for the inconvenience. Thank you.
+### **2023-06-23: PLEASE DO NOT INSTALL PRIVOXY PILOT UNTIL THIS NOTICE IS REMOVED. We're currently changing our installation script and expect it to be finished on Wednesday 2023-06-25. We apologize for the inconvenience. Thank you.**
 
 <BR>
 
