@@ -31,7 +31,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
   - fixed config date up time delay when config set <filter set> evoked.
   - renamed $bs in status() to $bsip (brew services info privoxy) to avoid confusion with bs() (brew services).
   - made lr() number of entries returned adjustable. i.e.: ppilot.sh status 20 returns last 20 log entries.
-  - added hostname to privoxy "blocked" page instead of just saying "unknown". Hostname checked and if needed changed on every change evoked by ppilot.sh
+  - added hostname to privoxy "blocked" page instead of just saying "unknown". Hostname checked on every change to config evoked by ppilot.sh and if needed changed.
 
 <BR><HR>
 
