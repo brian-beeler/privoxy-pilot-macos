@@ -5,7 +5,7 @@
 #            fixed config date up time delay when config set <filter set> evoked by local date update to $date_epoch in status().
 #            renamed $bs in status() to $bsip to avoid confusion with bs().
 #            made lr() number of entries returned adjustable
-#            added hostname to privoxy "blocked" page instead of just saying "unknown"
+#            added hostname to privoxy "blocked" page instead of just saying "unknown". hostname checked on every change to config evoked by ppilot.sh and if needed changed.
 #
 # copyright © Brian Beeler 2023 under CC BY-SA license
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
