@@ -5,7 +5,6 @@
 #            fixed config date up time delay when config set <filter set> evoked by local date update to $date_epoch in status().
 #            renamed $bs in status() to $bsip to avoid confusion with bs().
 #            made lr() number of entries returned adjustable
-#            added hostname to privoxy "blocked" page instead of just saying "unknown". hostname checked on every change to config evoked by ppilot.sh and if needed changed.
 #
 # copyright © Brian Beeler 2023 under CC BY-SA license
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -165,9 +164,6 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
     fi
   done
   echo "# " >> $config_tmp_file
-  if [ -n $hostname ]; then
-    echo "hostname $hostname" >> $config_tmp_file
-  fi
   cat $config_bak_file >> $config_tmp_file
   mv $config_tmp_file $config_file
   lw "config $3 active"
@@ -372,10 +368,12 @@ function main() {
   date_stamp=$(date -r "$date_epoch" +"%a %b %d %H:%M:%S")
   date_stamp_ISO=$(date -r "$date_epoch" +"%Y-%m-%d %H:%M:%S")
   config_original_file="/usr/local/etc/privoxy/config.original"
+  config_original_gz_file="/usr/local/etc/privoxy/config.original.gz"
   config_bak_file="/usr/local/etc/privoxy/config.bak"
   config_tmp_file="/usr/local/etc/privoxy/config.tmp"
   config_file="/usr/local/etc/privoxy/config"
   config_mod_file="/usr/local/etc/privoxy/config.mod"
+  config_file_md5="/usr/local/etc/privoxy/config.md5"
   log_file="/var/log/privoxy.log"
   filters_dir="/usr/local/etc/privoxy/filters"
   filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
