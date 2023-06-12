@@ -31,7 +31,6 @@ When stable I plan on using what has been done here and building the privoxy-pil
   - fixed config date up time delay when config set <filter set> evoked.
   - renamed $bs in status() to $bsip (brew services info privoxy) to avoid confusion with bs() (brew services).
   - made lr() number of entries returned adjustable. i.e.: ppilot.sh status 20 returns last 20 log entries.
-  - added hostname to privoxy "blocked" page instead of just saying "unknown". Hostname checked on every change to config evoked by ppilot.sh and if needed changed.
 
 <BR><HR>
 
@@ -178,17 +177,26 @@ While not common editing the original Privoxy config file is sometimes necessary
 
     `gzip -d /usr/local/etc/privoxy/config.original.gz`
 
-2. Edit config.original. Be careful as this is your original or "root" Privoxy config file. I'd suggest that all edits go at the top as that will make finding those edits at a later date.
+2. Edit config.original. Be careful as this is your original or "root" Privoxy config file. I'd suggest that all edits go at the top as that will make finding those edits easier at a later date.
 
     `nano /usr/local/etc/privoxy/config.original`
 
 3. Compress config.original:
 
-    `gzip /usr/local/etc/privoxy/config.original`
+    `gzip -k /usr/local/etc/privoxy/config.original && cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config && rm /usr/local/etc/privoxy/config.bak`
 
-4. Delete config.bak and config. Running "ppilot.sh status" will recreate those files and display that action in the log section of status.
+4. Run **either** of the below commands as needed. **Do not run both**. See [see](https://github.com/brian-beeler/privoxy-pilot-macos#configure-privoxy-and-install-privoxy-pilot) for an explanation between "shared" and "solo."
+   
+   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-reset.sh)"`
 
-    `rm /usr/local/etc/privoxy/config.bak && rm /usr/local/etc/privoxy/config && /usr/local/etc/ppilot.sh status`
+   or
+
+   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-reset.sh)"`
+
+
+5. Delete config.bak and config. Running "ppilot.sh status" will recreate those files and display that action in the log section of status.
+
+    `rm /usr/local/etc/privoxy/config.bak && rm /usr/local/etc/privoxy/config && /usr/local/etc/ppilot.sh config set default`
 
 You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/privoxy/config created" in the log section of status.
 
