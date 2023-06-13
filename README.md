@@ -149,7 +149,7 @@ Sometimes user changes need to be added to the Privoxy configuration. This must 
 
 If a mistake is made in editing config.bak that is causing Privoxy not to run and that mistake can not be tracked down simply delete config and config.bak then run:
 
-    `/usr/local/etc/privoxy/ppilot.sh config set default`
+    /usr/local/etc/privoxy/ppilot.sh config set default
 
 This will cause Privoxy Pilot to rebuild config.bak from config.original and config, with all the automated additions, from config.bak. From there edit config.bak where noted near the top of config.bak.
 
