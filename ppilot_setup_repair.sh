@@ -8,7 +8,7 @@ ppilot_setup() {
   # first time install
   # 
   # even if not first time install good to download most up-to-date ppilot.sh
-  echo "downloading latest ppilot.sh"
+  echo "downloading latest ppilot.sh\r\n"
   curl -o $ppilot_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"
   # set ppilot.sh as executable
   chmod ug+x $ppilot_file
@@ -98,18 +98,18 @@ function main() {
   hostname=$(hostname)
 
 
-  echo "This script is used to either setup Privoxy Pilot or repair Privoxy in case there is a problem."
+  echo "\r\nThis script is used to either setup Privoxy Pilot or repair Privoxy in case there is a problem."
   echo "Follow the instructions carefully."
 
   # ! -f $ppilot_setup_repair_file should mean first time run hence the questionare
 
   if [[ ! -f $ppilot_setup_repair_file ]]; then
     # even if not first time install good to download most up-to-date ppilot.sh
-    echo "downloading latest ppilot_setup_repair.sh"
+    echo "\r\ndownloading latest ppilot_setup_repair.sh\r\n"
     curl -o $ppilot_setup_repair_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_setup_repair.sh"
     chmod og+rwx $ppilot_setup_repair_file
     if [[ -f $ppilot_setup_repair_file ]]; then
-      echo "ppilot_setup_repair.sh can now be found in $privoxy_dir"
+      echo "\r\nppilot_setup_repair.sh can now be found in $privoxy_dir\r\n"
       ppilot_setup
     else
       exit 0
