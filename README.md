@@ -173,6 +173,8 @@ Instructions on how to add to the "distractions" filter list and setting up cron
 
 **Q. How do I set up Privoxy to be used by other computers or phones, smart tvs, etc?**
 
+`head -n 20 /usr/local/etc/privoxy/config | grep listen-address`
+
 A. It's already done. Just go to the proxy settings on your other devices and add you Mac's IP address and port "8118". To find that address from the terminal:
 
     `/usr/local/etc/privoxy/ppilot.sh config set default`
