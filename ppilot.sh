@@ -176,7 +176,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   ip_address=($ip_address)
   for address in "${ip_address[@]}"
   do
-    echo "listen-address $address" >> $config_tmp_file
+    echo "listen-address $address:8118" >> $config_tmp_file
   done
   # TODO: possible config error
   # echo "# " >> $config_tmp_file
