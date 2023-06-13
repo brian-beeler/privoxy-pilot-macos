@@ -97,7 +97,7 @@ function bs() {
 # TODO: error checking on privoxy.sh config set filter_group_no_exist
 #       right now on error no block lists are added
 function config() {
-  local blp_fl=("abuse" "ads" "crypto" "drugs" "everything" "facebook" "fraud" "gambling" "malware" "phishing" "piracy" "porn" "ransomware" "redirect" "scam" "tiktok" "torrent" "tracking")
+  local blp_fl=("abuse" "ads" "crypto" "drugs" "everything" "facebook" "fraud" "gambling" "malware" "phishing" "piracy" "porn" "ransomware" "redirect" "scam" "tiktok" "torrent" "tracking" "smart-tv")
 # checks for config.bak     and creates one if not found
 # options -c restore        restore config from config.bak. retores config to a vanilla state
 #         -c backup         backup config config.bak. use after editing config
@@ -181,7 +181,6 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   echo "# " >> $config_tmp_file
   echo "# activates privoxy log" >> $config_tmp_file
   echo "logfile  /var/log/privoxy.log" >> $config_tmp_file
-  echo -e "# \r\n# do not edit above this line\r\n# add configuration options below this line\r\n \r\n \r\n" >> $config_tmp_file
   cat $config_bak_file >> $config_tmp_file
   mv $config_tmp_file $config_file
   lw "config $3 active"
@@ -418,8 +417,10 @@ function main() {
   # Privoxy config version 3.0.34 used
   if [ ! -f $config_file ] && [ ! -f $config_bak_file ] && [ ! -f $config_original_file ]; then
     curl --no-progress-meter -o $config_original_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
-    cp $config_original_file $config_bak_file
-    cp $config_original_file $config_file
+    touch $config_bak_file
+    echo -e "# \r\n# do not edit above this line\r\n# add configuration options below this line in config.bak\r\n \r\n \r\n" >> $config_bak_file
+    cat $config_original_file >> $config_bak_file
+    cp $config_bak_file $config_file
     chmod ug+rw $config_file
     chmod ug+rw $config_original_file
     chmod ug+rw $config_bak_file
@@ -434,7 +435,10 @@ function main() {
   # most likely only happens on ppilot.sh inital run
   if [[ -f "$config_file" ]] && [[ ! -f "$config_original_file" ]] && [[ ! -f "$config_original_file.gz" ]] ; then
     cp $config_file $config_original_file
-    cp $config_file $config_bak_file
+    touch $config_bak_file
+    echo -e "# \r\n# do not edit above this line\r\n# add configuration options below this line in config.bak\r\n \r\n \r\n" >> $config_bak_file
+    cat "$config_original_file" >> $config_bak_file
+    cp $config_bak_file $config_file
     chmod ug+rw $config_original_file
     chmod ug+rw $config_bak_file
     gzip $config_original_file
@@ -445,8 +449,11 @@ function main() {
   fi
   # checks for config and no config.bak. creates config.bak 
   if [[ -f "$config_original_file" ]] && [[ ! -f "$config_bak_file" ]]; then
-    cp $config_original_file $config_bak_file
-    cp $config_original_file $config_file
+    echo "blah"
+    touch $config_bak_file
+    echo -e "# \r\n# do not edit above this line\r\n# add configuration options below this line in config.bak\r\n \r\n \r\n" >> $config_bak_file
+    cat $config_original_file >> $config_bak_file
+    cp $config_bak_file $config_file
     chmod a+rw $config_bak_file
     chmod a+rw $config_file
     # macOS seems to have an issue with this

@@ -3,13 +3,6 @@
 
 Privoxy Pilot a collection of bash scripts and set of templates to better manage Privoxy on macOS. It is not connected to the Privoxy project.
 
-<HR>
-
-### **2023-06-13: DO NOT INSTALL PRIVOXY PILOT UNTIL THIS NOTICE IS REMOVED.** 
-### **We're currently changing our installation script and we expect to be finished testing on Thursday 2023-06-16. We apologize for the inconvenience. Thank you.**
-
-<HR>
-
 This project is still in its early beginnings. If you have a question please [ask](https://github.com/brian-beeler/privoxy-pilot-macos/issues). If you are not comfortable working in the terminal than ask someone that is to help you. If you have an issue please post it to [issues](https://github.com/brian-beeler/privoxy-pilot-macos/issues).
 
 [Privoxy](https://www.privoxy.org) is a wonderful project to which I'm in debt to its contributors. My project simply makes managing Privoxy's settings on macOS a bit easier. Features include:
@@ -21,12 +14,12 @@ This project is still in its early beginnings. If you have a question please [as
   
     ![ppilot status screen](https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_status_screen.png)
 
-  - detailed logging of events as transacted with Privoxy Pilot
-  - ability to easily create custom filter lists
-  - ability to easily create filter groups that contain multiple filter lists
-  - ability to easily switch between different filter groups from a single command line
-  - Uses Homebrew to make Privoxy installation very easy
-  - incorporates block lists from the [Block List Project](https://github.com/blocklistproject/Lists)
+- detailed logging of events as transacted with Privoxy Pilot
+- ability to easily create custom filter lists
+- ability to easily create filter groups that contain multiple filter lists
+- ability to easily switch between different filter groups from a single command line
+- Uses Homebrew to make Privoxy installation very easy
+- incorporates block lists from the [Block List Project](https://github.com/blocklistproject/Lists)
 
 When stable I plan on using what has been done here and building the privoxy-pilot-ChromeOS project.
 
@@ -76,6 +69,8 @@ When stable I plan on using what has been done here and building the privoxy-pil
 Run the command below to download the install script and install Privoxy Pilot:
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_setup_repair.sh)"`
+
+When complete you should be presented with the status screen showing Privoxy running and the default filter set active.
 
 <BR>
 
@@ -140,39 +135,29 @@ display log
     `nano /usr/local/etc/privoxy/config.mod`
 
 
-
 <BR>
 
-### **Editing Privoxy options after Privoxy Pilot has been run**
+### **Editing Privoxy options after Privoxy Pilot has been installed**
 
-While not common editing the original Privoxy config file is sometimes necessary. It's important to edit the config file that was created on Privoxy's installation. The original config file untouched by Privoxy Pilot is stored in "/usr/local/etc/privoxy/config.original.gz". To edit:
+A quick explanation of the different configuration files:
+- **config.original**: The original config file as shipped with Privoxy. This file is never changed.
+- **config.bak**: a copy of config.original with a header showing where user changes can be made that survive updates
+- **config**: a copy of config.bak that contains automated changes. Never edit this file as it's deleted on configuration updates.
+- **config.mod**: contains filter groups with their respective lists.
 
-1. Uncompress config.original:
+Sometimes user changes need to be added to the Privoxy configuration. This must be done only in config.bak and never in config.original. 
 
-    `gzip -d /usr/local/etc/privoxy/config.original.gz`
+If a mistake is made in editing config.bak that is causing Privoxy not to run and that mistake can not be tracked down simply delete config and config.bak then run:
 
-2. Edit config.original. Be careful as this is your original or "root" Privoxy config file. I'd suggest that all edits go at the top as that will make finding those edits easier at a later date.
+    `/usr/local/etc/privoxy/ppilot.sh config set default`
 
-    `nano /usr/local/etc/privoxy/config.original`
+This will cause Privoxy Pilot to rebuild config.bak from config.original and config, with all the automated additions, from config.bak. From there edit config.bak where noted near the top of config.bak.
 
-3. Compress config.original:
+If config.original is missing or damaged delete: config.original, config.bak and config. Then run:
 
-    `gzip -k /usr/local/etc/privoxy/config.original && cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config && rm /usr/local/etc/privoxy/config.bak`
+    `gzip -dk /usr/local/etc/privoxy/config.original.gz && /usr/local/etc/privoxy/ppilot.sh config set default`
 
-4. Run **either** of the below commands as needed. **Do not run both**. See [see](https://github.com/brian-beeler/privoxy-pilot-macos#configure-privoxy-and-install-privoxy-pilot) for an explanation between "shared" and "solo."
-   
-   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-reset.sh)"`
-
-   or
-
-   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-reset.sh)"`
-
-
-5. Delete config.bak and config. Running "ppilot.sh status" will recreate those files and display that action in the log section of status.
-
-    `rm /usr/local/etc/privoxy/config.bak && rm /usr/local/etc/privoxy/config && /usr/local/etc/ppilot.sh config set default`
-
-You should see "/usr/local/etc/privoxy/config.bak created" and "/usr/local/etc/privoxy/config created" in the log section of status.
+This will cause Privoxy Pilot to rebuild config.bak from the newly decompressed config.original. Then config, with all the automated additions, will be built with the automated additions from config.bak. From there edit config.bak where noted near the top of config.bak.
 
 <BR>
 
@@ -186,51 +171,46 @@ Instructions on how to add to the "distractions" filter list and setting up cron
 
 ### **Questions**
 
+**Q. How do I set up Privoxy to be used by other computers or phones, smart tvs, etc?**
+
+A. It's already done. Just go to the proxy settings on your other devices and add you Mac's IP address and port "8118". To find that address from the terminal:
+
+    `head -n 20 /usr/local/etc/privoxy/config | grep "listen-address"`
+
+    This will list the address or addresses Privoxy is listening to.
+
 **Q. Privoxy doesn't seem to be working. What can I do?**
 
-1. Restore the original config file that was installed with Privoxy:
+1. If you are using a Macbook and have switched to a new location, with a new IP address, there could be a conflict with another host. run:
+
+    `/usr/local/etc/privoxy/ppilot.sh config set default`
+
+    This will rebuild you config file with your current IP address.
+   
+2. Restore the original config file that was installed with Privoxy by deleting: config.original, config.bak and config. Then run:
+
+    `gzip -dk /usr/local/etc/privoxy/config.original.gz && /usr/local/etc/privoxy/ppilot.sh config set default`
+
+3. If that doesn't work run:
     
-    `cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config`
+    `/usr/local/etc/privoxy/ppilot_setup_repair.sh`
 
-2. Confirm that config.original is the same as the installed config file:
+    And follow the instructions to repair Privoxy.
 
-    `md5 -q config | diff - config.md5`
-
-    If you see no output then the two files are identical and the as installed Privoxy config file has been restored. Continue to step 3. 
-    
-    If you see an output with two md5 checksums then the as installed Privoxy config file has not been restored. Decompress the compressed backup of config.original:
+4. Try resetting config to the original Privoxy version and start Privoxy from brew:
 
     `gzip -dk /usr/local/etc/privoxy/config.original.gz`
-    
-    Follow step 1 copy config.original to config and rerun the md5 checksum check command above. If there is no output it means the newly decompressed config.original copied to config is the original config file. Continue to step 3.
 
-3. Start Privoxy from brew:
+    `cp /usr/local/etc/privoxy/config.original /usr/local/etc/privoxy/config`
 
     `brew services start privoxy`
 
-   If you see "==> Successfully started privoxy" then it's possible there was a problem in the previous config file. Continue to step 4.
+   If you see "==> Successfully started privoxy" then it's possible there was a problem in the previous config file. Run:
+
+    `cp /usr/local/etc/privoxy/ppilot_setup_repair.sh`
    
    After restoring the original Privoxy configuration if you don't see "==> Successfully started privoxy" then something has gone wrong with Privoxy or Homebrew in its management of Privoxy. The first place to check is the Privoxy [documentation](https://www.privoxy.org/user-manual/index.html). Also refer to the Homebrew [documentation](https://docs.brew.sh/) and their [community group](https://github.com/orgs/Homebrew/discussions). 
 
-4. On the Mac that is hosting Privoxy try going to "ads.com". You should see the Privoxy block page. This means Privoxy is working.
-   
-5. If you want to share your Privoxy connection then run:
-   
-    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-reset.sh)"`
-
-    Or for single host use only:
-
-    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-reset.sh)"`
-
-6. Stop Privoxy via brew and start with Privoxy Pilot:
-
-    `brew services stop privoxy && /usr/local/etc/privoxy/ppilot.sh start`
-
-**Q. I did the "Install and configure Privoxy Pilot to be accessible by local network clients" but only the Mac hosting Privoxy can connect to the proxy server and no one from the local network can connect to the proxy server [hosted on the Mac].**
-
-A. The install script detects your host's IP address and adds it to config but on the rare occasion that a host is using both their wireless and ethernet connections human intervention is required. Near the top of "/usr/local/etc/privoxy/config" you will see "listen-address" an IP address followed by ":8118" i.e.: "listen-address 192.168.1.2". Change the IP address to the IP of the connection in which client's can connect to your host.
-
-The most common occurrence of this issue is when a Mac is being used a required of "forced" proxy server where local network clients connect to the Internet via the Mac's "share network" option and not directly to a dedicated router.
 
 <BR>
 
