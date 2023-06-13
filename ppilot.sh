@@ -450,15 +450,12 @@ function main() {
   # checks for config and no config.bak. creates config.bak 
   if [[ -f "$config_file" ]] && [[ ! -f "$config_bak_file" ]]; then
     echo "gzip4 start"
-    gzip -d $config_original_file
+    gzip -dk $config_original_gz_file
     echo "gzip4 finish"
     cp $config_original_file $config_bak_file
     cp $config_original_file $config_file
     chmod a+rw $config_bak_file
     chmod a+rw $config_file
-    echo "gzip5 start"
-    gzip $config_original_file
-    echo "gzip5 finish"
     # macOS seems to have an issue with this
     chmod a-w $config_original_file.gz
     lw "$config_bak_file created"
