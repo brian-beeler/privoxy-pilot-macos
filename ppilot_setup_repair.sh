@@ -8,7 +8,7 @@ ppilot_setup() {
   # first time install
   # 
   # even if not first time install good to download most up-to-date ppilot.sh
-  echo -e "downloading latest ppilot.sh\r\n"
+  echo -e "\r\ndownloading latest ppilot.sh\r\n"
   curl -o $ppilot_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"
   # set ppilot.sh as executable
   chmod ug+x $ppilot_file
@@ -20,7 +20,9 @@ ppilot_setup() {
   if [[ ! -f $config_original_file ]]; then
     md5 -q $config_file > $config_file_md5
     cp $config_file $config_original_file
+    echo "gzip1 start"
     gzip -k $config_original_file
+    echo "gzip1 finish"
     # rm $config_file because it will be rewritten in this script
     $ppilot_file config set default
     exit 1
@@ -110,7 +112,6 @@ function main() {
     curl -o $ppilot_setup_repair_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_setup_repair.sh"
     chmod og+rwx $ppilot_setup_repair_file
     if [[ -f $ppilot_setup_repair_file ]]; then
-      echo -e "\r\nppilot_setup_repair.sh can now be found in $privoxy_dir\r\n"
       ppilot_setup
     else
       exit 0
