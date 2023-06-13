@@ -175,8 +175,6 @@ Instructions on how to add to the "distractions" filter list and setting up cron
 
 A. It's already done. Just go to the proxy settings on your other devices and add you Mac's IP address and port "8118". To find that address from the terminal:
 
-    `head -n 20 /usr/local/etc/privoxy/config`
-
 **Q. Privoxy doesn't seem to be working. What can I do?**
 
 1. If you are using a Macbook and have switched to a new location, with a new IP address, there could be a conflict with another host. run:
