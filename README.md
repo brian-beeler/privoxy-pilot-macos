@@ -68,7 +68,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 Run the command below to download the install script and install Privoxy Pilot:
 
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_setup_repair.sh")`
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_setup_repair.sh)"`
 
 <BR>
 
