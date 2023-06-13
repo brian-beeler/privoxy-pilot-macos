@@ -181,7 +181,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   echo "# " >> $config_tmp_file
   echo "# activates privoxy log" >> $config_tmp_file
   echo "logfile  /var/log/privoxy.log" >> $config_tmp_file
-  echo -e "\r\n# \r\n# do not edit above this line\r\n# add configuration options here\r\n# \r\n \r\n" >> $config_tmp_file
+  echo -e "# \r\n# do not edit above this line\r\n# add configuration options below this line\r\n \r\n \r\n" >> $config_tmp_file
   cat $config_bak_file >> $config_tmp_file
   mv $config_tmp_file $config_file
   lw "config $3 active"
