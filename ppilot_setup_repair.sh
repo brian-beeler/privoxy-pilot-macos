@@ -22,34 +22,19 @@ ppilot_setup() {
     cp $config_file $config_original_file
     gzip -k $config_original_file
     # rm $config_file because it will be rewritten in this script
-    rm $config_file
+    $ppilot_file config set default
   else
     # run only if $config_original_file is present
     echo "Privoxy Pilot seems to have been previously installed on this Mac."
     read -p "Do you want to repair Privoxy Pilot? (Y/N) " choice_repair
     if [[ $choice_repair == [Yy] ]]; then
       echo "repairing privoxy..."
-      ppilot_repair $1
+      ppilot_repair
     else
       echo "Exiting..."
       exit 1
     fi
   fi
-  # 
-  echo -e "\r\n \r\n# do not edit above this line\r\n# add configuration options here\r\n# \r\n" >> $config_file
-  # 
-  if [[ $1 == "shared" ]]; then
-    echo -e "# allow privoxy to make connections with the local network" >> $config_file
-    echo -e "listen-address $(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')":8118 >> $config_file
-  fi
-  # 
-  if [ -n $hostname ]; then
-    echo -e "# sets hostname for logs and \"blocked\" page" >> $config_file
-    echo "hostname $hostname" >> $config_tmp_file
-  fi
-  echo -e "# \r\n# \r\n" >> $config_file
-  cat $config_original_file >> $config_file
-  cp $config_file $config_bak_file
 }
 
 #
@@ -105,30 +90,43 @@ function main() {
   config_file="/usr/local/etc/privoxy/config"
   config_mod_file="/usr/local/etc/privoxy/config.mod"
   config_file_md5="/usr/local/etc/privoxy/config.md5"
-  log_file="/var/log/privoxy.log"
+  log_file="/var/log/ppilot.log"
+  privoxy_dir="/usr/local/etc/privoxy/"
   filters_dir="/usr/local/etc/privoxy/filters"
   filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
   ppilot_file="/usr/local/etc/privoxy/ppilot.sh"
+  ppilot_setup_repair_file="/usr/local/etc/privoxy/ppilot_setup_repair.sh"
   hostname=$(hostname)
+
 
   echo "This script is used to either setup Privoxy Pilot or repair Privoxy in case there is a problem."
   echo "Follow the instructions cafefully."
 
-  if [[ $1 == "setup" && ( $2 == "shared" || $2 == "solo" ) ]]; then
+  # ! -f $ppilot_setup_repair_file should mean first time run hence the questionare
+  if [[ ! -f $ppilot_setup_repair_file ]]; then
+    mv ppilot_setup_repair.sh $ppilot_setup_repair_file
+    chmod og+rwx $ppilot_setup_repair_file
+    if [[ -f $ppilot_setup_repair_file ]]; then
+      echo "ppilot_setup_repair.sh can now be found in $privoxy_dir"
+      ppilot_setup
+    else
+      exit 0
+    fi
+  fi
+  # Normal choices
+  if [[ $1 == "setup" ]]; then
     #
     echo "setting up privoxy pilot..."
-    ppilot_setup $2
-  elif [[ $1 == "repair" && ( $2 == "shared" || $2 == "solo" ) ]]; then
+    ppilot_setup
+  elif [[ $1 == "repair" ]]; then
     #
     echo "repairing privoxy..."
-    ppilot_repair $2
+    ppilot_repair
   #  
   else
-    echo "usage: ./ppilot-setup-repair.sh [setup shared | setup solo | repair shared | repair solo]"
-    echo "  setup shared      setup privoxy pilot and privoxy to be shared with local network clients"
-    echo "  setup solo        setup privoxy pilot and privoxy to only be used by this Mac"
-    echo "  repair shared     repair and reset privoxy pilot and privoxy to be shared with local network clients"
-    echo "  repair solo       repair and reset privoxy pilot and privoxy to only be used by this Mac"
+    echo "usage: ./ppilot-setup-repair.sh [ setup | repair ]"
+    echo "  setup       setup privoxy pilot"
+    echo "  repair      repair and reset privoxy pilot"
   fi
 }
 

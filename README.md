@@ -3,12 +3,6 @@
 
 Privoxy Pilot a collection of bash scripts and set of templates to better manage Privoxy on macOS. It is not connected to the Privoxy project.
 
-<BR>
-
-### **2023-06-12: PLEASE DO NOT INSTALL PRIVOXY PILOT UNTIL THIS NOTICE IS REMOVED. We're currently changing our installation script and we expect to be finished testing on Wednesday 2023-06-15. We apologize for the inconvenience. Thank you.**
-
-<BR>
-
 This project is still in its early beginnings. If you have a question please [ask](https://github.com/brian-beeler/privoxy-pilot-macos/issues). If you are not comfortable working in the terminal than ask someone that is to help you. If you have an issue please post it to [issues](https://github.com/brian-beeler/privoxy-pilot-macos/issues).
 
 [Privoxy](https://www.privoxy.org) is a wonderful project to which I'm in debt to its contributors. My project simply makes managing Privoxy's settings on macOS a bit easier. Features include:
@@ -36,6 +30,7 @@ When stable I plan on using what has been done here and building the privoxy-pil
   - fixed config date up time delay when config set <filter set> evoked.
   - renamed $bs in status() to $bsip (brew services info privoxy) to avoid confusion with bs() (brew services).
   - made lr() number of entries returned adjustable. i.e.: ppilot.sh status 20 returns last 20 log entries.
+- Installer completely rewritten so instead of multiple files now there is only one for both install and repair, shared and solo.
 
 <BR><HR>
 
@@ -67,46 +62,13 @@ When stable I plan on using what has been done here and building the privoxy-pil
 
 4. If you saw "Successfully started privoxy" setup your Mac to use the Privoxy proxy server by setting your proxy server to "127.0.0.1:8118" in Network settings. Test to ensure it works by going to "ads.com". If Privoxy is running and the correct proxy settings have been entered you will see a message in your browser window stating that access to that website has been blocked. If you see something else then something is wrong in either your proxy settings or Privoxy itself.
 
-5. Finally shut down Privoxy:
-
-    `brew services stop privoxy`
-
-    You should see "==> Successfully stopped privoxy" confirming that Privoxy has been stopped.
-
 <BR>
 
 ### **Configure Privoxy and install Privoxy Pilot**
 
-Your choices are to either allow Privoxy to be accessible to clients on your local network or only by the Mac on which it is installed.
-If you're unsure if your IP address is static then follow the instructions in "Configure Privoxy Pilot for single host use only" below "Configure Privoxy to be accessed by other local network clients and install Privoxy Pilot."
+Run the command below to download the install script and install Privoxy Pilot:
 
-#### **Install and configure Privoxy Pilot to be accessible by local network clients**
-
- It is recommended that Privoxy be accessible to clients on your local network **but only if you have a static IP address.** By allowing connections from clients on your local network other devices like phones, tablets and "smart tvs" can also take advantage of the features of Privoxy.
-
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-shared-setup.sh)"`
-
-#### **Install and configure Privoxy Pilot for single host use only**
-
-If you don't want to accept any connections from clients on your local network or don't have a static IP address this is the preferred installation and configuration.
-
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/privoxy-solo-setup.sh"`
-    
-<BR>
-  
-#### **Configure Privoxy Pilot for initial start**
-
-1. Run Privoxy Pilot start: 
-   
-    `/usr/local/etc/privoxy/ppilot.sh start`
-
-    This will perform a series of checks for the configuration files required to run, start Privoxy and display the current status of Privoxy with Privoxy Pilot extensions.
-
-2. Run Privoxy Pilot to have the "default" filter list group activated:  
-   
-    `/usr/local/etc/privoxy/ppilot.sh config set default`
-
-    This will configure Privoxy to use the default filter set which consists of lists from Block List Project and a local file "/usr/local/etc/privoxy/filters/mylist" where you can add websites you want blocked. Locally created and managed filter lists are found in "/usr/local/etc/privoxy/filters". Block List Project filters are stored in "/usr/local/etc/privoxy/filters/blp" and should not be edited as they are automatically updated every week.
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_setup_repair.sh"`
 
 <BR>
 
