@@ -3,7 +3,11 @@
 
 Privoxy Pilot a collection of bash scripts and set of templates to better manage Privoxy on macOS. It is not connected to the Privoxy project.
 
+<HR>
+
 ### **2023-06-13: DO NOT INSTALL PRIVOXY PILOT UNTIL THIS NOTICE IS REMOVED. We're currently changing our installation script and we expect to be finished testing on Thursday 2023-06-16. We apologize for the inconvenience. Thank you.**
+
+<HR>
 
 This project is still in its early beginnings. If you have a question please [ask](https://github.com/brian-beeler/privoxy-pilot-macos/issues). If you are not comfortable working in the terminal than ask someone that is to help you. If you have an issue please post it to [issues](https://github.com/brian-beeler/privoxy-pilot-macos/issues).
 
