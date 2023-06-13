@@ -423,9 +423,7 @@ function main() {
     chmod ug+rw $config_file
     chmod ug+rw $config_original_file
     chmod ug+rw $config_bak_file
-    echo "gzip2 start"
     gzip $config_original_file
-    echo "gzip2 finish"
     # macOS seems to have an issue with this
     chmod a-w $config_original_file.gz
     lw "$config_original_file.gz created"
@@ -439,19 +437,14 @@ function main() {
     cp $config_file $config_bak_file
     chmod ug+rw $config_original_file
     chmod ug+rw $config_bak_file
-    echo "gzip3 start"
     gzip $config_original_file
-    echo "gzip3 finish"
     # macOS seems to have an issue with this
     chmod a-w $config_original_file.gz
     lw "$config_original_file.gz created"
     lw "$config_bak_file created"
   fi
   # checks for config and no config.bak. creates config.bak 
-  if [[ -f "$config_file" ]] && [[ ! -f "$config_bak_file" ]]; then
-    echo "gzip4 start"
-    gzip -dk $config_original_gz_file
-    echo "gzip4 finish"
+  if [[ -f "$config_original_file" ]] && [[ ! -f "$config_bak_file" ]]; then
     cp $config_original_file $config_bak_file
     cp $config_original_file $config_file
     chmod a+rw $config_bak_file

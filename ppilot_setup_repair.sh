@@ -20,10 +20,7 @@ ppilot_setup() {
   if [[ ! -f $config_original_file ]]; then
     md5 -q $config_file > $config_file_md5
     cp $config_file $config_original_file
-    echo "gzip1 start"
     gzip -k $config_original_file
-    ls -l $config_original_file
-    echo "gzip1 finish"
     # rm $config_file because it will be rewritten in this script
     $ppilot_file config set default
     exit 1
