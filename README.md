@@ -177,6 +177,8 @@ A. It's already done. Just go to the proxy settings on your other devices and ad
 
     `head -n 20 /usr/local/etc/privoxy/config | grep listen-address`
 
+    `/usr/local/etc/privoxy/ppilot.sh config set default`
+
 **Q. Privoxy doesn't seem to be working. What can I do?**
 
 1. If you are using a Macbook and have switched to a new location, with a new IP address, there could be a conflict with another host. run:
