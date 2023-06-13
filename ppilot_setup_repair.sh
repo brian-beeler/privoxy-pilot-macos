@@ -99,11 +99,14 @@ function main() {
 
 
   echo "This script is used to either setup Privoxy Pilot or repair Privoxy in case there is a problem."
-  echo "Follow the instructions cafefully."
+  echo "Follow the instructions carefully."
 
   # ! -f $ppilot_setup_repair_file should mean first time run hence the questionare
+
   if [[ ! -f $ppilot_setup_repair_file ]]; then
-    mv ppilot_setup_repair.sh $ppilot_setup_repair_file
+    # even if not first time install good to download most up-to-date ppilot.sh
+    echo "downloading latest ppilot_setup_repair.sh"
+    curl -o $ppilot_setup_repair_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_setup_repair.sh"
     chmod og+rwx $ppilot_setup_repair_file
     if [[ -f $ppilot_setup_repair_file ]]; then
       echo "ppilot_setup_repair.sh can now be found in $privoxy_dir"
