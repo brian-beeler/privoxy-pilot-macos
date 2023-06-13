@@ -252,7 +252,7 @@ function lr() {
   # 
   # 
   local log_entries_out=$2
-  local log_file_line_count=$(wc -l /var/log/privoxy.log | awk '{print $1}')
+  local log_file_line_count=$(wc -l $log_file | awk '{print $1}')
   # regex check for positive integer else log_entries_out=10
   [[ $log_entries_out =~ ^[1-9][0-9]?$ ]] || log_entries_out=10
   # check to see if requested lines out is not greater than log length
@@ -374,7 +374,7 @@ function main() {
   config_file="/usr/local/etc/privoxy/config"
   config_mod_file="/usr/local/etc/privoxy/config.mod"
   config_file_md5="/usr/local/etc/privoxy/config.md5"
-  log_file="/var/log/privoxy.log"
+  log_file="/var/log/ppilot.log"
   filters_dir="/usr/local/etc/privoxy/filters"
   filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
   hostname=$(hostname)
