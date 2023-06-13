@@ -75,7 +75,7 @@ function bs() {
     exit 1
   fi
   if [[ $1 == "restart" && $brew_services == *"Running: false"* ]]; then
-    brew services start provixy
+    brew services start privoxy
     lw "restart"
     status
     exit 1
