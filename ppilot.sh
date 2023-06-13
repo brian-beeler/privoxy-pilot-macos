@@ -423,7 +423,9 @@ function main() {
     chmod ug+rw $config_file
     chmod ug+rw $config_original_file
     chmod ug+rw $config_bak_file
+    echo "blah1"
     gzip $config_original_file
+    echo "blah2"
     # macOS seems to have an issue with this
     chmod a-w $config_original_file.gz
     lw "$config_original_file.gz created"
