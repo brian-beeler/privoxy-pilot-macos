@@ -182,7 +182,7 @@ A. It's already done. Just go to the proxy settings on your other devices and ad
 
 1. If you are using a Macbook and have switched to a new location, with a new IP address, there could be a conflict with another host. run:
 
-    `/usr/local/etc/privoxy/ppilot.sh config set default`
+    /usr/local/etc/privoxy/ppilot.sh config set default
 
     This will rebuild you config file with your current IP address.
    
