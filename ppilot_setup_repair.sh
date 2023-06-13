@@ -8,7 +8,7 @@ ppilot_setup() {
   # first time install
   # 
   # even if not first time install good to download most up-to-date ppilot.sh
-  echo "downloading latest ppilot.sh\r\n"
+  echo -e "downloading latest ppilot.sh\r\n"
   curl -o $ppilot_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"
   # set ppilot.sh as executable
   chmod ug+x $ppilot_file
@@ -63,7 +63,7 @@ ppilot_repair() {
   fi
   # repair privoxy by restoring orginal config file from compressed save
   if [ ! -f $config_original_file ] && [ -f $config_original_gz_file ]; then
-    echo "Restoring missing $config_original_file from $config_original_gz_file"
+    echo -e "Restoring missing $config_original_file from $config_original_gz_file"
     gunzip -k $config_original_gz_file
     cp $config_original_file $config_file
     ppilot_setup $2
@@ -98,18 +98,18 @@ function main() {
   hostname=$(hostname)
 
 
-  echo "\r\nThis script is used to either setup Privoxy Pilot or repair Privoxy in case there is a problem."
-  echo "Follow the instructions carefully."
+  echo -e "\r\nThis script is used to either setup Privoxy Pilot or repair Privoxy in case there is a problem."
+  echo -e "Follow the instructions carefully."
 
   # ! -f $ppilot_setup_repair_file should mean first time run hence the questionare
 
   if [[ ! -f $ppilot_setup_repair_file ]]; then
     # even if not first time install good to download most up-to-date ppilot.sh
-    echo "\r\ndownloading latest ppilot_setup_repair.sh\r\n"
+    echo -e "\r\ndownloading latest ppilot_setup_repair.sh\r\n"
     curl -o $ppilot_setup_repair_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot_setup_repair.sh"
     chmod og+rwx $ppilot_setup_repair_file
     if [[ -f $ppilot_setup_repair_file ]]; then
-      echo "\r\nppilot_setup_repair.sh can now be found in $privoxy_dir\r\n"
+      echo -e "\r\nppilot_setup_repair.sh can now be found in $privoxy_dir\r\n"
       ppilot_setup
     else
       exit 0
