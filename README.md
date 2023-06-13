@@ -155,7 +155,7 @@ This will cause Privoxy Pilot to rebuild config.bak from config.original and con
 
 If config.original is missing or damaged delete: config.original, config.bak and config. Then run:
 
-    `gzip -dk /usr/local/etc/privoxy/config.original.gz && /usr/local/etc/privoxy/ppilot.sh config set default`
+    gzip -dk /usr/local/etc/privoxy/config.original.gz && /usr/local/etc/privoxy/ppilot.sh config set default
 
 This will cause Privoxy Pilot to rebuild config.bak from the newly decompressed config.original. Then config, with all the automated additions, will be built with the automated additions from config.bak. From there edit config.bak where noted near the top of config.bak.
 
