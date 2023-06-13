@@ -58,22 +58,21 @@ curl -o $ppilot_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pil
 chmod ug+x $ppilot_file
 #
 # Unlikely but no $config_original_file && no $config_original_gz_file means some bad happenned
-  if [ ! -f $config_original_file ] && [ ! -f $config_original_gz_file ]; then
-    curl -o $config_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
-  fi
-  # repair privoxy by restoring orginal config file from compressed save
-  if [ ! -f $config_original_file ] && [ -f $config_original_gz_file ]; then
-    echo "Restoring missing $config_original_file from $config_original_gz_file"
-    gunzip -k $config_original_gz_file
-    cp $config_original_file $config_file
-    ppilot_setup $2
-  fi
-  # repair privoxy by restoring orginal config file
-  if [ -f $config_original_file ]; then
-    cp $config_original_file $config_file
-    ppilot_setup $2
-  fi
+if [ ! -f $config_original_file ] && [ ! -f $config_original_gz_file ]; then
+  curl -o $config_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
 fi
+# repair privoxy by restoring orginal config file from compressed save
+if [ ! -f $config_original_file ] && [ -f $config_original_gz_file ]; then
+  echo "Restoring missing $config_original_file from $config_original_gz_file"
+  gunzip -k $config_original_gz_file
+  cp $config_original_file $config_file
+  ppilot_setup $2
+fi
+# repair privoxy by restoring orginal config file
+if [ -f $config_original_file ]; then
+  cp $config_original_file $config_file
+ppilot_setup $2
+  fi
 }
 
 #
