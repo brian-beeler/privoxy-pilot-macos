@@ -178,10 +178,9 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   do
     echo "listen-address $address:8118" >> $config_tmp_file
   done
-  # TODO: possible config error
-  # echo "# " >> $config_tmp_file
-  # echo "# activates privoxy log" >> $config_tmp_file
-  # echo "logfile  /var/log/privoxy.log" >> $config_tmp_file
+  echo "# " >> $config_tmp_file
+  echo "# activates privoxy log" >> $config_tmp_file
+  echo "logfile  /var/log/privoxy.log" >> $config_tmp_file
   echo -e "# \r\n# do not edit above this line\r\n# add configuration options below this line\r\n \r\n \r\n" >> $config_tmp_file
   cat $config_bak_file >> $config_tmp_file
   mv $config_tmp_file $config_file
