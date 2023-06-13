@@ -39,39 +39,39 @@ ppilot_setup() {
 
 #
 ppilot_repair() {
-# repair privoxy by restoring orginal config file which the only file ppilot touches
-# 
-if [ ! -d $filters_dir ] || [ ! -f $filters_blp_dir ]; then
-  echo "Privoxy Pilot does not seem to have been previously installed on this Mac."
-  read -p "Do you want to setup Privoxy Pilot? (Y/N) " choice_repair
-  if [ $choice_repair == [Yy] ]; then
-    echo "setting up privoxy pilot..."
-    ppilot_setup $1
-  else
-    exit 1
+  # repair privoxy by restoring orginal config file which the only file ppilot touches
+  # 
+  if [ ! -d $filters_dir ] || [ ! -f $filters_blp_dir ]; then
+    echo "Privoxy Pilot does not seem to have been previously installed on this Mac."
+    read -p "Do you want to setup Privoxy Pilot? (Y/N) " choice_repair
+    if [ $choice_repair == [Yy] ]; then
+      echo "setting up privoxy pilot..."
+      ppilot_setup $1
+    else
+      exit 1
+    fi
   fi
-fi
-# even if not first time install good to download most up-to-date ppilot.sh
-echo "downloading latest ppilot.sh"
-curl -o $ppilot_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"
-# set ppilot.sh as executable
-chmod ug+x $ppilot_file
-#
-# Unlikely but no $config_original_file && no $config_original_gz_file means some bad happenned
-if [ ! -f $config_original_file ] && [ ! -f $config_original_gz_file ]; then
-  curl -o $config_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
-fi
-# repair privoxy by restoring orginal config file from compressed save
-if [ ! -f $config_original_file ] && [ -f $config_original_gz_file ]; then
-  echo "Restoring missing $config_original_file from $config_original_gz_file"
-  gunzip -k $config_original_gz_file
-  cp $config_original_file $config_file
-  ppilot_setup $2
-fi
-# repair privoxy by restoring orginal config file
-if [ -f $config_original_file ]; then
-  cp $config_original_file $config_file
-ppilot_setup $2
+  # even if not first time install good to download most up-to-date ppilot.sh
+  echo "downloading latest ppilot.sh"
+  curl -o $ppilot_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/ppilot.sh"
+  # set ppilot.sh as executable
+  chmod ug+x $ppilot_file
+  #
+  # Unlikely but no $config_original_file && no $config_original_gz_file means some bad happenned
+  if [ ! -f $config_original_file ] && [ ! -f $config_original_gz_file ]; then
+    curl -o $config_file "https://raw.githubusercontent.com/brian-beeler/privoxy-pilot-macos/main/config-3.0.34"
+  fi
+  # repair privoxy by restoring orginal config file from compressed save
+  if [ ! -f $config_original_file ] && [ -f $config_original_gz_file ]; then
+    echo "Restoring missing $config_original_file from $config_original_gz_file"
+    gunzip -k $config_original_gz_file
+    cp $config_original_file $config_file
+    ppilot_setup $2
+  fi
+  # repair privoxy by restoring orginal config file
+  if [ -f $config_original_file ]; then
+    cp $config_original_file $config_file
+    ppilot_setup $2
   fi
 }
 
