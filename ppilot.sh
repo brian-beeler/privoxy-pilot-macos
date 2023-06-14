@@ -195,28 +195,28 @@ function ct() {
     # $1=input text, $2=color
     # red
     if [[ $2 == "r" ]]; then
-        echo -e "\033[31m$1\033[0m"
+        echo -e "\033[31m"$1"\033[0m"
     # green
     elif [[ $2 == "g" ]]; then
-        echo -e "\033[32m$1\033[0m"
+        echo -e "\033[32m"$1"\033[0m"
     # blue
     elif [[ $2 == "b" ]]; then
-        echo -e "\033[34m$1\033[0m"
+        echo -e "\033[34m"$1"\033[0m"
     # cyan
     elif [[ $2 == "c" ]]; then
-        echo -e "\033[36m$1\033[0m"
+        echo -e "\033[36m"$1"\033[0m"
     # magenta
     elif [[ $2 == "m" ]]; then
-        echo -e "\033[35m$1\033[0m"
+        echo -e "\033[35m"$1"\033[0m"
     # yellow
     elif [[ $2 == "y" ]]; then
-        echo -e "\033[33m$1\033[0m"
+        echo -e "\033[33m"$1"\033[0m"
     # red - blinking
     elif [[ $2 == "rb" ]]; then
-        echo -e "\033[31;5m$1\033[0m"
+        echo -e "\033[31;5m"$1"\033[0m"
     # if unknow color option is passed then just echo input
     else
-        echo "$1"
+        echo $1
     fi
 }
 # end ct()
@@ -324,8 +324,8 @@ function lw() {
 # function status(): display privoxy status including PID, uptime,
 function status() {
   local ip_adds=()
-  local ip_adds_grep=$(grep -e "^listen-address.*127.0.0.1" /Users/brian/privoxy/config | awk '{print $2}'); if [ -n "$ip_adds_grep" ]; then ip_adds+=("$ip_adds_grep"); fi
-  ip_adds_grep=$(grep -e "^listen-address" /Users/brian/privoxy/config | awk '!/127\.0\.0\.1/ { print $2 }'); if [ -n "$ip_adds_grep" ]; then ip_adds+=("$ip_adds_grep"); fi
+  local ip_adds_grep=$(grep -e "^listen-address.*127.0.0.1" $config_file | awk '{print $2}'); if [ -n "$ip_adds_grep" ]; then ip_adds+=("$ip_adds_grep"); fi
+  ip_adds_grep=$(grep -e "^listen-address" $config_file | awk '!/127\.0\.0\.1/ { print $2 }'); if [ -n "$ip_adds_grep" ]; then ip_adds+=("$ip_adds_grep"); fi
   ip_adds="${ip_adds[*]}"
   local bsip=$(brew services info privoxy)
   # $date_epoch updated local for latest date 
