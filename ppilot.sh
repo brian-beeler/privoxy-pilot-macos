@@ -5,6 +5,7 @@
 #            fixed config date up time delay when config set <filter set> evoked by local date update to $date_epoch in status().
 #            renamed $bs in status() to $bsip to avoid confusion with bs().
 #            made lr() number of entries returned adjustable
+#            added ip address(es) being used to status
 #
 # copyright © Brian Beeler 2023 under CC BY-SA license
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -172,8 +173,6 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   # sets ip address
   echo "# " >> $config_tmp_file
   echo "# sets ip address. 127.0.0.1 default on privoxy install" >> $config_tmp_file
-  ip_address=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')
-  ip_address=($ip_address)
   for address in "${ip_address[@]}"
   do
     echo "listen-address $address:8118" >> $config_tmp_file
@@ -324,6 +323,10 @@ function lw() {
 #
 # function status(): display privoxy status including PID, uptime,
 function status() {
+  local ip_adds=()
+  local ip_adds_grep=$(grep -e "^listen-address.*127.0.0.1" /Users/brian/privoxy/config | awk '{print $2}'); if [ -n "$ip_adds_grep" ]; then ip_adds+=("$ip_adds_grep"); fi
+  ip_adds_grep=$(grep -e "^listen-address" /Users/brian/privoxy/config | awk '!/127\.0\.0\.1/ { print $2 }'); if [ -n "$ip_adds_grep" ]; then ip_adds+=("$ip_adds_grep"); fi
+  ip_adds="${ip_adds[*]}"
   local bsip=$(brew services info privoxy)
   # $date_epoch updated local for latest date 
   local date_epoch=$(date +%s)
@@ -356,6 +359,7 @@ function status() {
   echo -e "        user: $(ct "$bsip_user" "y")"
   echo -e "          up: $up_date_time"
   echo -e "      config: $(ct "$cf_date" "y") ($(ct "$cf_lapse" "y"))"
+  echo -e "     address: $(ct "$ip_adds" "c")"
   echo -e "filter group: $(ct "$filter_group" "b")"
   echo -e "filter lists: $(ct "$filter_list" "b")"  
   echo "              -------------------"
@@ -391,12 +395,14 @@ function main() {
   config_file="/usr/local/etc/privoxy/config"
   config_mod_file="/usr/local/etc/privoxy/config.mod"
   config_file_md5="/usr/local/etc/privoxy/config.md5"
-  log_file="/var/log/ppilot.log"
-  privoxy_dir="/usr/local/etc/privoxy/"
   filters_dir="/usr/local/etc/privoxy/filters"
   filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
+  privoxy_dir="/usr/local/etc/privoxy/"
   ppilot_file="/usr/local/etc/privoxy/ppilot.sh"
   ppilot_setup_repair_file="/usr/local/etc/privoxy/ppilot_setup_repair.sh"
+  log_file="/var/log/ppilot.log"
+  ip_address=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')
+  ip_address=($ip_address)
   hostname=$(hostname)
 
   # checking for log file exsistance

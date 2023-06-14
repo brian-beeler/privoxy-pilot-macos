@@ -30,6 +30,8 @@ When stable I plan on using what has been done here and building the privoxy-pil
   - fixed config date up time delay when config set <filter set> evoked.
   - renamed $bs in status() to $bsip (brew services info privoxy) to avoid confusion with bs() (brew services).
   - made lr() number of entries returned adjustable. i.e.: ppilot.sh status 20 returns last 20 log entries.
+  - added ip address(es) being used to status
+   
 - Installer completely rewritten so instead of multiple files now there is only one for both installation and repair.
 
 <BR><HR>

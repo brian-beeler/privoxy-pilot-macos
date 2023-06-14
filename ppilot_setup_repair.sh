@@ -90,12 +90,14 @@ function main() {
   config_file="/usr/local/etc/privoxy/config"
   config_mod_file="/usr/local/etc/privoxy/config.mod"
   config_file_md5="/usr/local/etc/privoxy/config.md5"
-  log_file="/var/log/ppilot.log"
-  privoxy_dir="/usr/local/etc/privoxy/"
   filters_dir="/usr/local/etc/privoxy/filters"
   filters_blp_dir="/usr/local/etc/privoxy/filters/blp"
+  privoxy_dir="/usr/local/etc/privoxy/"
   ppilot_file="/usr/local/etc/privoxy/ppilot.sh"
   ppilot_setup_repair_file="/usr/local/etc/privoxy/ppilot_setup_repair.sh"
+  log_file="/var/log/ppilot.log"
+  ip_address=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')
+  ip_address=($ip_address)
   hostname=$(hostname)
 
 
