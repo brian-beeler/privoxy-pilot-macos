@@ -173,7 +173,7 @@ if [ "$2" = "set" ] && [ -n "$3" ]; then
   # sets ip address
   echo "# " >> $config_tmp_file
   echo "# sets ip address. 127.0.0.1 default on privoxy install" >> $config_tmp_file
-  for address in "${ip_address[@]}"
+  for address in ${ip_address[@]}
   do
     echo "listen-address $address:8118" >> $config_tmp_file
   done
@@ -323,6 +323,7 @@ function lw() {
 #
 # function status(): display privoxy status including PID, uptime,
 function status() {
+  # get fresh ip addresses from config
   local ip_adds=()
   local ip_adds_grep=$(grep -e "^listen-address.*127.0.0.1" $config_file | awk '{print $2}'); if [ -n "$ip_adds_grep" ]; then ip_adds+=("$ip_adds_grep"); fi
   ip_adds_grep=$(grep -e "^listen-address" $config_file | awk '!/127\.0\.0\.1/ { print $2 }'); if [ -n "$ip_adds_grep" ]; then ip_adds+=("$ip_adds_grep"); fi
@@ -401,9 +402,16 @@ function main() {
   ppilot_file="/usr/local/etc/privoxy/ppilot.sh"
   ppilot_setup_repair_file="/usr/local/etc/privoxy/ppilot_setup_repair.sh"
   log_file="/var/log/ppilot.log"
-  ip_address=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')
-  ip_address=($ip_address)
   hostname=$(hostname)
+  # sometimes ifconfig needs to run a few times to get a non-null response
+  ip_address=()
+  for ((i=0; i<5; i++)); do
+    ip_address=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')
+    if [ -n "$ip_address" ]; then ip_addresses+=("$ip_address"); break; fi
+    sleep 1
+  done
+  # if ifconfig still returns null read ip address(es) from config and pass those along
+  if [ -z "$ip_address" ]; then ip_address=$(grep -e "^listen-address" "$config_file" | awk '!/127\.0\.0\.1/ { print $2 }'); fi
 
   # checking for log file exsistance
   if [ ! -f $log_file ]; then
@@ -455,7 +463,6 @@ function main() {
   fi
   # checks for config and no config.bak. creates config.bak 
   if [[ -f "$config_original_file" ]] && [[ ! -f "$config_bak_file" ]]; then
-    echo "blah"
     touch $config_bak_file
     echo -e "# \r\n# do not edit above this line\r\n# add configuration options below this line in config.bak\r\n \r\n \r\n" >> $config_bak_file
     cat $config_original_file >> $config_bak_file
