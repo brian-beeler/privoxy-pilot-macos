@@ -316,7 +316,7 @@ function lr() {
 # function lw(): log write. writes a log entry
 function lw() {
   # $1: text
-  echo "$date_stamp_long     $1"  >> $log_file
+  echo "$date_stamp_long    $1"  >> $log_file
 }
 # end lw()
 
@@ -352,14 +352,14 @@ function status() {
     [[ ${#up_date[2]} -eq 1 ]] && up_date[2]="0${up_date[2]}"
     up_date="${up_date[0]} ${up_date[1]} ${up_date[2]} ${up_date[3]}"
     local up_time=$(td "$date_epoch" "$(date -jf "%a %b %d %T %Y" "$up_date" +%s)" )
-    local up_date_time="$(ct "$up_date" "y") ($(ct "$up_time" "y"))"
+    local up_date_time="$(ct "$up_date" "y")  ($(ct "$up_time" "y"))"
   else
     local up_date_time=""
   fi
   echo -e "         pid: $(ct "$bsip_pid" "y")"
   echo -e "        user: $(ct "$bsip_user" "y")"
   echo -e "          up: $up_date_time"
-  echo -e "      config: $(ct "$cf_date" "y") ($(ct "$cf_lapse" "y"))"
+  echo -e "      config: $(ct "$cf_date" "y")  ($(ct "$cf_lapse" "y"))"
   echo -e "     address: $(ct "$ip_adds" "c")"
   echo -e "filter group: $(ct "$filter_group" "b")"
   echo -e "filter lists: $(ct "$filter_list" "b")"  
