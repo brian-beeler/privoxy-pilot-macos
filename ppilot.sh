@@ -403,15 +403,15 @@ function main() {
   ppilot_setup_repair_file="/usr/local/etc/privoxy/ppilot_setup_repair.sh"
   log_file="/var/log/ppilot.log"
   hostname=$(hostname)
-  # sometimes ifconfig needs to run a few times to get a non-null response
   ip_address=()
-  for ((i=0; i<5; i++)); do
+  # sometimes ifconfig needs to run a few times to get a non-null response
+  # for ((i=0; i<5; i++)); do
     ip_address=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')
     if [ -n "$ip_address" ]; then ip_addresses+=("$ip_address"); break; fi
-    sleep 1
-  done
+  #   sleep 1
+  # done
   # if ifconfig still returns null read ip address(es) from config and pass those along
-  if [ -z "$ip_address" ]; then ip_address=$(grep -e "^listen-address" "$config_file" | awk '!/127\.0\.0\.1/ { print $2 }'); fi
+  if [ -z $ip_address ]; then ip_address=$(grep -e "^listen-address" $config_file | awk '!/127.0.0.1/ { sub(/:.*/, "", $2); print $2 }'); fi
 
   # checking for log file exsistance
   if [ ! -f $log_file ]; then
